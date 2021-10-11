@@ -1,12 +1,11 @@
-# IDE
-.idea
-
 # Dependencies
-node_modules
-package-lock.json
+/node_modules
+
+# Testing
+/coverage
 
 # Production
-client/src/contracts
+/build
 
 # Misc
 .DS_Store

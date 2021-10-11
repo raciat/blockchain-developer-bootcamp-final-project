@@ -20,8 +20,8 @@ contract PreciousStoneToken is ERC721, ERC721URIStorage, ERC721Burnable, Ownable
   
   constructor() ERC721("PreciousStoneToken", "PST") {}
 
-  function safeMint(address to, uint256 tokenId, bytes _data) public onlyOwner {
-    _safeMint(to, tokenId, _data);
+  function safeMint(address to, uint256 tokenId) public onlyOwner {
+    _safeMint(to, tokenId);
   }
 
   function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {
