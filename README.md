@@ -22,13 +22,13 @@ Minting NFTs in the Ethereum using [ERC-721](https://ethereum.org/en/developers/
 
 - Execute `npm install -g truffle` to install Truffle globally to be able to execute it from the command line
 - Execute `npm install -g ganache-cli` to install Ganache CLI globally to be able to execute it from the command line
-- Execute `npm install @openzeppelin/contracts` from the project root
+- Execute `npm install` from the project root to install all dependencies
 
 ### Contract Development
 
 - Execute `ganache-cli` 
 - Execute `truffle compile` to compile all smart contracts
-- Execute `truffle migrate` to migrate smart contracts
+- Execute `truffle migrate --network development` to migrate smart contracts
 - Execute `truffle test` to run unit tests for smart contracts
 
 ### UI Development
@@ -39,3 +39,21 @@ Minting NFTs in the Ethereum using [ERC-721](https://ethereum.org/en/developers/
 - Install [MetaMask browser extension](https://metamask.io/download.html) and use mnemonic provided by `ganache-cli` when started as seed phrase
   - Make sure to switch network to *Localhost:8545*
 - Open `http://localhost:3000` to see the result, it will ask to connect wallet's account
+
+## How to run?
+
+### Deploying to Ropsten via Infura
+- Create new project in [Infura](https://infura.io)
+- Copy endpoint URL for Ropsten and set an environment variable: `export INFURA_URL="##REPLACE_ME##`
+- Set mnemonic as environment variable: `export MNEMONIC="##REPLACE_ME##"`
+
+### Runnning on Heroku
+
+- Create a new app in Heroku (`heroku-20` type of stack)
+- Go to *Settings* and add the following *Buildpacks*:
+  - `heroku/nodejs`
+- Go to *Settings* and add the following *Config Vars*:
+  - `MNEMONIC` (use seed phrase from *MetaMask*)
+  - `INFURA_URL` (use endpoint URL for Ropsten from [Infura](https://infura.io))
+- Go to *Deploy* and connect app to *GitHub* repository
+- Push `master` branch
