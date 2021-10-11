@@ -38,13 +38,14 @@ Minting NFTs in the Ethereum using [ERC-721](https://ethereum.org/en/developers/
 - Execute `npm start` to start local development server
 - Install [MetaMask browser extension](https://metamask.io/download.html) and use mnemonic provided by `ganache-cli` when started as seed phrase
   - Make sure to switch network to *Localhost:8545*
-- Open `http://localhost:3000` to see the result, it will ask to connect wallet's account
+- Open `http://localhost:3000` to see the result, it will ask to connect to current wallet's account
+- Click *Mint NFT* button to execute a transaction and mint PST token
 
 ## How to run?
 
 ### Deploying to Ropsten via Infura
 - Create new project in [Infura](https://infura.io)
-- Copy endpoint URL for Ropsten and set an environment variable: `export INFURA_URL="##REPLACE_ME##`
+- Copy endpoint URL for Ropsten testnet and set an environment variable: `export INFURA_URL="##REPLACE_ME##"`
 - Set mnemonic as environment variable: `export MNEMONIC="##REPLACE_ME##"`
 
 ### Runnning on Heroku
@@ -54,6 +55,6 @@ Minting NFTs in the Ethereum using [ERC-721](https://ethereum.org/en/developers/
   - `heroku/nodejs`
 - Go to *Settings* and add the following *Config Vars*:
   - `MNEMONIC` (use seed phrase from *MetaMask*)
-  - `INFURA_URL` (use endpoint URL for Ropsten from [Infura](https://infura.io))
+  - `INFURA_URL` (use endpoint URL for Ropsten testnet from [Infura](https://infura.io))
 - Go to *Deploy* and connect app to *GitHub* repository
 - Push `master` branch
