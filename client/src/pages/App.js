@@ -4,6 +4,8 @@ import getWeb3 from '../utils/getWeb3';
 
 import './App.css';
 
+const CONTRACT_ADDRESS = process.env.REACT_APP_CONTRACT_ADDRESS;
+
 class App extends Component {
   state = { txHash: null, web3: null, accounts: null, contract: null };
 
@@ -15,7 +17,8 @@ class App extends Component {
 
       const networkId = await web3.eth.net.getId();
       const deployedNetwork = PreciousStoneContract.networks[networkId];
-      const instance = new web3.eth.Contract(PreciousStoneContract.abi, deployedNetwork && deployedNetwork.address);
+      const contractAddress = CONTRACT_ADDRESS ? CONTRACT_ADDRESS : deployedNetwork && deployedNetwork.address;
+      const instance = new web3.eth.Contract(PreciousStoneContract.abi, contractAddress);
 
       this.setState({ web3, accounts, contract: instance });
     } catch (error) {

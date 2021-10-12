@@ -6,6 +6,7 @@ node_modules
 
 # Production
 client/src/contracts
+.env
 
 # Misc
 .DS_Store

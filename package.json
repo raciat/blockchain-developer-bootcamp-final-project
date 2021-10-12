@@ -8,11 +8,16 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.3.2",
-    "@truffle/hdwallet-provider": "^1.5.1"
+    "@truffle/hdwallet-provider": "^1.5.1",
+    "dotenv": "^10.0.0"
   },
   "scripts": {
-    "build": "npm install -g truffle && truffle compile && truffle migrate --network ropsten && cd client && npm install && npm run build && npm install -g serve",
-    "start": "serve -s client/build/"
+    "dotenv": "envsubst < .env-dist > .env",
+    "contract:build": "npm install -g truffle && truffle compile",
+    "contract:deploy:ropsten": "if test \"$REACT_APP_CONTRACT_ADDRESS\" = '' ; then truffle migrate --network ropsten ; fi",
+    "build:client": "cd client && npm ci && npm run build",
+    "build": "npm run dotenv && npm run contract:build && npm run contract:deploy:ropsten && npm run build:client",
+    "start": "cd client && npm run serve"
   },
   "engines": {
     "node": "12.x"
