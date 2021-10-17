@@ -12,9 +12,9 @@ The idea is to create decentralized market, where everyone can verify origin of 
 As part of this exercise, I will deploy a smart contract to mint NFTs specifically for diamonds which besides typical parameters would keep its clarity, cut, carat and color.
 Minting NFTs in the Ethereum using [ERC-721](https://ethereum.org/en/developers/docs/standards/tokens/erc-721/) can be replaced with *ERC-1155* in the future, to issue different tokens per different gems.
 
-- Wholesale gemstone **manufacturers and suppliers** would be able to mint tokens for their products
+- Approved wholesale gemstone **Suppliers** would be able to add their products
 - **Dealers** would be able to verify its origin
-- **Clients** would be able to verify its origin, history, get familiar with its characteristics and purchase or sale
+- **Clients** would be able to verify its origin, history, get familiar with its characteristics and purchase
 
 ## How to develop?
 
@@ -50,6 +50,7 @@ Minting NFTs in the Ethereum using [ERC-721](https://ethereum.org/en/developers/
 - Copy restore phrase from MetaMask and set as `MNEMONIC` environment variable in `.env` file
 - Use [Ropsten Faucet](https://faucet.ropsten.be) to get some Ether for default account in Ropsten testnet, to be able to deploy the smart contract
 - Execute `truffle migrate --network ropsten` to deploy smart contracts to Ropsten testnet
+- Use [Ropsten Etherscan](https://ropsten.etherscan.io) page to see details of deployed contract using its address
 
 ### Running on Heroku
 
