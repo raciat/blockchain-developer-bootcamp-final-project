@@ -7,17 +7,12 @@ const { items: DiamondStruct, isDefined, isType } = require('./ast-helper');
  * Ethereum client
  * See docs: https://www.trufflesuite.com/docs/truffle/testing/writing-tests-in-javascript
  */
-contract('PreciousStoneToken', function (/* accounts */) {
+contract('PreciousStoneToken', function (accounts) {
+  const [contractOwner, additionalOwner, account3, account4] = accounts;
   let instance;
 
   beforeEach(async () => {
     instance = await PreciousStoneToken.new();
-  });
-
-  describe('Variables', () => {
-    it('should have an owner', async () => {
-      assert.equal(typeof instance.owner, 'function', 'the contract has no owner');
-    });
   });
 
   describe('Enums', () => {
@@ -25,13 +20,17 @@ contract('PreciousStoneToken', function (/* accounts */) {
     const enumClarity = PreciousStoneToken.enums.Clarity;
 
     describe('Color Enum', () => {
-      assert(enumColor, 'The contract should define an Enum called `Color`');
+      it('should define `Color`', () => {
+        assert(enumColor, 'The contract should define an Enum called `Color`');
+      });
     });
     
-    describe('Color Enum', () => {
-      assert(enumClarity, 'The contract should define an Enum called `Clarity`');
+    describe('Clarity Enum', () => {
+      it('should define `Clarity`', () => {
+        assert(enumClarity, 'The contract should define an Enum called `Clarity`');
+      });
 
-      it('should define `ForSale`', () => {
+      it('should has properties', () => {
         assert(enumClarity.hasOwnProperty('Flawless'), 'The enum does not have a `Flawless` value');
         assert(enumClarity.hasOwnProperty('InternallyFlawless'), 'The enum does not have a `InternallyFlawless` value');
         assert(enumClarity.hasOwnProperty('VVS1'), 'The enum does not have a `VVS1` value');
@@ -48,52 +47,77 @@ contract('PreciousStoneToken', function (/* accounts */) {
   });
 
   describe('Structs', () => {
-    let diamondStruct;
-
-    before(() => {
-      diamondStruct = DiamondStruct(PreciousStoneToken);
-      assert(diamondStruct !== null, 'The contract should define `Diamond Struct`');
+    describe('Diamond Struct', () => {
+      let diamondStruct;
+  
+      before(() => {
+        diamondStruct = DiamondStruct(PreciousStoneToken);
+      });
+  
+      it('should define `Diamond Struct`', () => {
+        assert(diamondStruct !== null, 'The contract should define `Diamond Struct`');
+      });
+  
+      it('should have a `color`', () => {
+        assert(isDefined(diamondStruct)('color'), 'Diamond Item should have a `color` field');
+      });
+  
+      it('should have a `clarity`', () => {
+        assert(isDefined(diamondStruct)('clarity'), 'Diamond Item should have a `clarity` field');
+      });
+  
+      it('should have a `cut`', () => {
+        assert(isDefined(diamondStruct)('cut'), 'Diamond Item should have a `cut` field');
+        assert(isType(diamondStruct)('cut')('string'), '`cut` should be of type `string`');
+      });
+      
+      it('should have a `caratWeight`', () => {
+        assert(isDefined(diamondStruct)('caratWeight'), 'Diamond Item should have a `caratWeight` field');
+        assert(isType(diamondStruct)('caratWeight')('uint'), '`caratWeight` should be of type `uint`');
+      });
     });
+  });
 
-    it('should have a `color`', () => {
-      assert(isDefined(diamondStruct)('color'), 'Diamond Item should have a `color` field');
-    });
-
-    it('should have a `clarity`', () => {
-      assert(isDefined(diamondStruct)('clarity'), 'Diamond Item should have a `clarity` field');
-    });
-
-    it('should have a `cut`', () => {
-      assert(isDefined(diamondStruct)('cut'), 'Diamond Item should have a `cut` field');
-      assert(isType(diamondStruct)('cut')('string'), '`cut` should be of type `string`');
+  describe('Owners', () => {
+    it('should have an owner', async () => {
+      assert.equal(await instance.owners.call(contractOwner), true, 'the contract has no owner');
     });
     
-    it('should have a `caratWeigh`', () => {
-      assert(isDefined(diamondStruct)('caratWeigh'), 'Diamond Item should have a `caratWeigh` field');
-      assert(isType(diamondStruct)('caratWeigh')('uint'), '`caratWeigh` should be of type `uint`');
+    it('should add additional owner', async function () {
+      const result = await instance.addOwner(additionalOwner);
+      const logAdditionalOwnerAddress = result.logs[0].args.additionalOwnerAddress;
+
+      assert.equal(additionalOwner, logAdditionalOwnerAddress, 'LogOwnerAdded event with `additionalOwnerAddress` property not emitted');
+    });
+    
+    it('should remove an owner', async function () {
+      const result = await instance.removeOwner(additionalOwner);
+      const logOwnerAddress = result.logs[0].args.ownerAddress;
+
+      assert.equal(additionalOwner, logOwnerAddress, 'LogOwnerRemoved event with `ownerAddress` property not emitted');
     });
   });
 
   describe('Suppliers', () => {
-    it('should list empty list of suppliers', async function () {
-      const suppliers = await instance.getSuppliers();
-      assert(suppliers.length, 0, 'List of suppliers should be empty on start');
-    });
-    
     it('should add a new supplier', async function () {
-      await instance.addSupplier('0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb', 'Supplier 1');
-      const suppliers = await instance.getSuppliers();
-      assert(suppliers.length, 1, 'List of suppliers should be higher by 1');
+      const result = await instance.addSupplier(account3, 'Supplier 1');
+      const logSupplierAddress = result.logs[0].args.supplierAddress;
+
+      assert.equal(account3, logSupplierAddress, 'LogNewSupplier event with `supplierAddress` property not emitted');
     });
     
     it('should deactivate a supplier', async function () {
-      await instance.deactivateSupplier(0);
-      assert.equal(suppliers[0].active, false, 'Supplier should be deactivated');
+      const result = await instance.deactivateSupplier(account3);
+      const logSupplierAddress = result.logs[0].args.supplierAddress;
+
+      assert.equal(account3, logSupplierAddress, 'LogSupplierDeactivated event with `supplierAddress` property not emitted');
     });
     
     it('should activate a supplier', async function () {
-      await instance.activateSupplier(0);
-      assert.equal(suppliers[0].active, true, 'Supplier should be activated');
+      const result = await instance.activateSupplier(account3);
+      const logSupplierAddress = result.logs[0].args.supplierAddress;
+
+      assert.equal(account3, logSupplierAddress, 'LogSupplierActivated event with `supplierAddress` property not emitted');
     });
   });
 
