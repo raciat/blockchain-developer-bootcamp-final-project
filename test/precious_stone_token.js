@@ -74,6 +74,29 @@ contract('PreciousStoneToken', function (/* accounts */) {
     });
   });
 
+  describe('Suppliers', () => {
+    it('should list empty list of suppliers', async function () {
+      const suppliers = await instance.getSuppliers();
+      assert(suppliers.length, 0, 'List of suppliers should be empty on start');
+    });
+    
+    it('should add a new supplier', async function () {
+      await instance.addSupplier('0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb', 'Supplier 1');
+      const suppliers = await instance.getSuppliers();
+      assert(suppliers.length, 1, 'List of suppliers should be higher by 1');
+    });
+    
+    it('should deactivate a supplier', async function () {
+      await instance.deactivateSupplier(0);
+      assert.equal(suppliers[0].active, false, 'Supplier should be deactivated');
+    });
+    
+    it('should activate a supplier', async function () {
+      await instance.activateSupplier(0);
+      assert.equal(suppliers[0].active, true, 'Supplier should be activated');
+    });
+  });
+
   describe('Deployment', () => {
     it('should assert true', async function () {
       await PreciousStoneToken.deployed();
