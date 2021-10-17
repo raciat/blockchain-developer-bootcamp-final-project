@@ -27,9 +27,11 @@ Minting NFTs in the Ethereum using [ERC-721](https://ethereum.org/en/developers/
 
 ### Contract Development
 
-- Execute `ganache-cli` 
+- Execute `truffle develop`
+  - Alternative to execute `ganache-cli` in a separate tab
 - Execute `truffle compile` to compile all smart contracts
-- Execute `truffle migrate --network development` to deploy smart contracts to local network
+- Execute `truffle migrate --network develop` to deploy smart contracts to local network
+  - Alternative to execute `truffle migrate --network development` if using `ganache-cli`
 - Execute `truffle test` to run unit tests for smart contracts
 
 ### UI Development
