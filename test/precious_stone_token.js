@@ -121,6 +121,25 @@ contract('PreciousStoneToken', function (accounts) {
     });
   });
 
+  describe('Items', () => {
+    it('should add a new item', async function () {
+      await instance.addSupplier(account3, 'Supplier 1', { from: contractOwner });
+      
+      const result = await instance.addItem(0, 0, 'diamond', 2, 10000, { from: account3 });
+      const logSku = result.logs[0].args.sku;
+
+      assert.equal(0, logSku, 'LogItemForSale event with `skuCount` property not emitted');
+    });
+
+    it('should set an item as sold', async function () {
+      const skuCount = 0;
+      const result = await instance.buyItem(skuCount, { from: account4 });
+      const logSku = result.logs[0].args.sku;
+
+      assert.equal(skuCount, logSku, 'LogItemSold event with `skuCount` property not emitted');
+    });
+  });
+
   describe('Deployment', () => {
     it('should assert true', async function () {
       await PreciousStoneToken.deployed();

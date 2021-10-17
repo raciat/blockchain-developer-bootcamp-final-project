@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.2;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
+import '@openzeppelin/contracts/token/ERC721/ERC721.sol';
+import '@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol';
+import '@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol';
 
 /// @title Precious Stones Mint via PST - Precious Stone Non-Fungible Tokens
 /// @author Tomasz Racia
@@ -34,7 +34,7 @@ contract PreciousStoneToken is ERC721, ERC721URIStorage, ERC721Burnable {
     string cut;
     uint caratWeight;
   }
-  
+
   struct Supplier {
     address payable supplierAddress;
     string supplierName;
@@ -50,6 +50,7 @@ contract PreciousStoneToken is ERC721, ERC721URIStorage, ERC721Burnable {
     Diamond gem;
     Supplier supplier;
     State state;
+    uint price;
     address payable buyer;
     string tokenId;
   }
@@ -69,7 +70,27 @@ contract PreciousStoneToken is ERC721, ERC721URIStorage, ERC721Burnable {
     _;
   }
 
-  constructor() ERC721("PreciousStoneToken", "PST") {
+  modifier forSale(uint sku) {
+    require(items[sku].state == State.ForSale);
+    require(items[sku].buyer == payable(address(0)));
+    _;
+  }
+
+  modifier paidEnough(uint price) {
+    require(msg.value >= price);
+    _;
+  }
+
+  modifier checkValue(uint sku) {
+    // Refund them after pay for item
+    _;
+
+    uint price = items[sku].price;
+    uint amountToRefund = msg.value - price;
+    items[sku].buyer.transfer(amountToRefund);
+  }
+
+  constructor() ERC721('PreciousStoneToken', 'PST') {
     owners[msg.sender] = true;
   }
 
@@ -117,7 +138,7 @@ contract PreciousStoneToken is ERC721, ERC721URIStorage, ERC721Burnable {
     return true;
   }
 
-  function addItem(Color color, Clarity clarity, string memory cut, uint caratWeight) public onlySuppliers returns (bool) {
+  function addItem(Color color, Clarity clarity, string memory cut, uint caratWeight, uint price) public onlySuppliers returns (bool) {
     Diamond memory gem = Diamond({
       color: color,
       clarity: clarity,
@@ -130,6 +151,7 @@ contract PreciousStoneToken is ERC721, ERC721URIStorage, ERC721Burnable {
       gem: gem,
       supplier: suppliers[msg.sender],
       state: State.ForSale,
+      price: price,
       buyer: payable(address(0)),
       tokenId: ''
     });
@@ -138,6 +160,27 @@ contract PreciousStoneToken is ERC721, ERC721URIStorage, ERC721Burnable {
 
     skuCount += 1;
 
+    return true;
+  }
+
+  function getAvailableItems() public view returns (Item[] memory){
+    Item[] memory _items = new Item[](skuCount);
+
+    for (uint i = 0; i < skuCount; i++) {
+      _items[i] = items[i];
+    }
+
+    return _items;
+  }
+
+  function buyItem(uint sku) public payable forSale(sku) paidEnough(items[sku].price) checkValue(sku) returns (bool) {
+    items[sku].supplier.supplierAddress.transfer(items[sku].price);
+
+    items[sku].buyer = payable(msg.sender);
+    items[sku].state = State.Sold;
+
+    emit LogItemSold(sku);
+    
     return true;
   }
 
