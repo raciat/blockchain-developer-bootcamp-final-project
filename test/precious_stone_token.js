@@ -80,7 +80,23 @@ contract('PreciousStoneToken', function (accounts) {
 
   describe('Owners', () => {
     it('should have an owner', async () => {
-      assert.equal(await instance.owners.call(contractOwner), true, 'the contract has no owner');
+      const result = await instance.isOwner(contractOwner);
+
+      assert.equal(result.valueOf(), true, 'The contract has no owner');
+    });
+
+    it('should confirm account is an owner', async function () {
+      await instance.addOwner(additionalOwner);
+      const result = await instance.isOwner(additionalOwner);
+
+      assert.equal(result.valueOf(), true, 'Incorrect owner returned');
+    });
+
+    it('should confirm account is not an owner', async function () {
+      await instance.removeOwner(additionalOwner);
+      const result = await instance.isOwner(additionalOwner);
+
+      assert.equal(result.valueOf(), false, 'Incorrect owner returned');
     });
     
     it('should add additional owner', async function () {
@@ -99,6 +115,21 @@ contract('PreciousStoneToken', function (accounts) {
   });
 
   describe('Suppliers', () => {
+    it('should confirm account is a supplier', async function () {
+      await instance.addSupplier(account3, 'Supplier 1');
+      const result = await instance.isSupplier(account3);
+
+      assert.equal(result.valueOf(), true, 'Incorrect supplier returned');
+    });
+    
+    it('should confirm account is not a supplier', async function () {
+      await instance.addSupplier(account3, 'Supplier 1');
+      await instance.deactivateSupplier(account3);
+      const result = await instance.isSupplier(account3);
+
+      assert.equal(result.valueOf(), false, 'Incorrect supplier returned');
+    });
+    
     it('should add a new supplier', async function () {
       const result = await instance.addSupplier(account3, 'Supplier 1');
       const logSupplierAddress = result.logs[0].args.supplierAddress;

@@ -12,10 +12,10 @@ import '@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol';
 /// @custom:experimental This is an experimental contract
 contract PreciousStoneToken is ERC721, ERC721URIStorage, ERC721Burnable {
 
-  mapping (address => bool) public owners;
+  mapping (address => bool) internal owners;
 
   modifier onlyOwner() {
-    require(owners[msg.sender] == true);
+    require(owners[msg.sender] == true, 'Not an owner');
     _;
   }
 
@@ -43,7 +43,7 @@ contract PreciousStoneToken is ERC721, ERC721URIStorage, ERC721Burnable {
 
   enum State { ForSale, Sold }
 
-  uint public skuCount;
+  uint internal skuCount;
 
   struct Item {
     uint sku;
@@ -55,8 +55,8 @@ contract PreciousStoneToken is ERC721, ERC721URIStorage, ERC721Burnable {
     string tokenId;
   }
 
-  mapping (address => Supplier) public suppliers;
-  mapping (uint => Item) public items;
+  mapping (address => Supplier) internal suppliers;
+  mapping (uint => Item) internal items;
 
   event LogNewSupplier(address supplierAddress);
   event LogSupplierDeactivated(address supplierAddress);
@@ -71,13 +71,13 @@ contract PreciousStoneToken is ERC721, ERC721URIStorage, ERC721Burnable {
   }
 
   modifier forSale(uint sku) {
-    require(items[sku].state == State.ForSale);
-    require(items[sku].buyer == payable(address(0)));
+    require(items[sku].state == State.ForSale, 'Not for sale');
+    require(items[sku].buyer == payable(address(0)), 'Not for sale');
     _;
   }
 
   modifier paidEnough(uint price) {
-    require(msg.value >= price);
+    require(msg.value >= price, 'Not paid enough');
     _;
   }
 
@@ -94,6 +94,10 @@ contract PreciousStoneToken is ERC721, ERC721URIStorage, ERC721Burnable {
     owners[msg.sender] = true;
   }
 
+  function isOwner(address ownerAddress) public view returns (bool) {
+    return owners[ownerAddress] ? true : false;
+  }
+
   function addOwner(address additionalOwnerAddress) public onlyOwner returns (bool) {
     owners[additionalOwnerAddress] = true;
 
@@ -108,6 +112,10 @@ contract PreciousStoneToken is ERC721, ERC721URIStorage, ERC721Burnable {
     emit LogOwnerRemoved(ownerAddress);
 
     return true;
+  }
+
+  function isSupplier(address payable supplierAddress) public view returns (bool) {
+    return suppliers[supplierAddress].active ? true : false;
   }
 
   function addSupplier(address payable supplierAddress, string memory supplierName) public onlyOwner returns (bool) {
@@ -184,7 +192,7 @@ contract PreciousStoneToken is ERC721, ERC721URIStorage, ERC721Burnable {
     return true;
   }
 
-  function safeMint(address to, uint256 tokenId) public onlyOwner {
+  function safeMint(address to, uint256 tokenId) internal onlyOwner {
     _safeMint(to, tokenId);
   }
 
