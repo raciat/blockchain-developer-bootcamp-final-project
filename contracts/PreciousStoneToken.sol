@@ -66,7 +66,7 @@ contract PreciousStoneToken is ERC721, ERC721URIStorage, ERC721Burnable {
   event LogItemSold(uint sku);
 
   modifier onlySuppliers() {
-    require(suppliers[msg.sender].active == true);
+    require(suppliers[msg.sender].active == true, 'Not a supplier');
     _;
   }
 
