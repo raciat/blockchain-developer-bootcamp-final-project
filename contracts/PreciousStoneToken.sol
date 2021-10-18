@@ -175,7 +175,9 @@ contract PreciousStoneToken is ERC721, ERC721URIStorage, ERC721Burnable {
     Item[] memory _items = new Item[](skuCount);
 
     for (uint i = 0; i < skuCount; i++) {
-      _items[i] = items[i];
+      if (items[i].state == State.ForSale && items[i].buyer == payable(address(0)) && items[i].supplier.active == true) {
+        _items[i] = items[i];
+      }
     }
 
     return _items;
