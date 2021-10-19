@@ -2,23 +2,45 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Button } from 'antd';
+import { Form, Input, Button } from 'antd';
 import * as web3Actions from '../actions/web3';
 
 class Admin extends Component {
-  handleAddSupplier() {
-    this.props.addSupplier(this.props.accounts[0], 'Supplier 1');
+  formRef = React.createRef();
+
+  constructor(props) {
+    super(props);
+    this.handleFormSubmit = this.handleFormSubmit.bind(this)
+  }
+
+  handleFormSubmit(values) {
+    const { supplierAddress, supplierName } = values;
+    this.props.addSupplier(supplierAddress, supplierName);
+    this.formRef.current.resetFields();
   }
   
   render() {
     const { isOwner } = this.props;
-    
+
     if (!isOwner) { return null; }
 
     return (
       <div>
         <h2>Admin</h2>
-        <Button onClick={this.handleAddSupplier.bind(this)}>Add Supplier</Button>
+
+        <Form labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} onFinish={this.handleFormSubmit} ref={this.formRef}>
+          <Form.Item label="Supplier address" name="supplierAddress" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item label="Supplier name" name="supplierName" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+            <Button type="primary" htmlType="submit">
+              Add Supplier
+            </Button>
+          </Form.Item>
+        </Form>
       </div>
     );
   }

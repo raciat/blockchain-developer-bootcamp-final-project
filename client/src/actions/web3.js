@@ -1,3 +1,4 @@
+import { message } from 'antd';
 import getWeb3 from '../utils/getWeb3';
 import PreciousStoneContract from '../contracts/PreciousStoneToken.json';
 
@@ -51,8 +52,14 @@ export function getIsOwner() {
   return async (dispatch, getState) => {
     const web3 = getState().web3;
     const { accounts, contract } = web3;
-    const isOwner = await contract.methods.isOwner(accounts[0]).call();
-    dispatch(setIsOwner(isOwner));
+
+    try {
+      const isOwner = await contract.methods.isOwner(accounts[0]).call();
+      dispatch(setIsOwner(isOwner));
+    } catch (e) {
+      console.error('An error occurred in isOwner()', e);
+      message.error('An error occurred in isOwner()');
+    }
   };
 }
 
@@ -60,8 +67,14 @@ export function getIsSupplier() {
   return async (dispatch, getState) => {
     const web3 = getState().web3;
     const { accounts, contract } = web3;
-    const isSupplier = await contract.methods.isSupplier(accounts[0]).call();
-    dispatch(setIsSupplier(isSupplier));
+
+    try {
+      const isSupplier = await contract.methods.isSupplier(accounts[0]).call();
+      dispatch(setIsSupplier(isSupplier));
+    } catch (e) {
+      console.error('An error occurred in isSupplier()', e);
+      message.error('An error occurred in isSupplier()');
+    }
   };
 }
 
@@ -69,8 +82,14 @@ export function getAvailableItems() {
   return async (dispatch, getState) => {
     const web3 = getState().web3;
     const { contract } = web3;
-    const availableItems = await contract.methods.getAvailableItems().call();
-    dispatch(setAvailableItems(availableItems));
+
+    try {
+      const availableItems = await contract.methods.getAvailableItems().call();
+      dispatch(setAvailableItems(availableItems));
+    } catch (e) {
+      console.error('An error occurred in getAvailableItems()', e);
+      message.error('An error occurred in getAvailableItems()');
+    }
   };
 }
 
@@ -78,9 +97,16 @@ export function addSupplier(supplierAddress, supplierName) {
   return async (dispatch, getState) => {
     const web3 = getState().web3;
     const { accounts, contract } = web3;
-    await contract.methods
-      .addSupplier(supplierAddress, supplierName)
-      .send({ from: accounts[0] });
+
+    try {
+      await contract.methods
+        .addSupplier(supplierAddress, supplierName)
+        .send({ from: accounts[0] });
+      message.success('Supplier successfully added');
+    } catch (e) {
+      console.error('An error occurred in addSupplier()', e);
+      message.error('An error occurred in addSupplier()');
+    }
   };
 }
 
@@ -88,8 +114,15 @@ export function addItem(color, clarity, cut, caratWeight, price) {
   return async (dispatch, getState) => {
     const web3 = getState().web3;
     const { accounts, contract } = web3;
-    await contract.methods
-      .addItem(color, clarity, cut, caratWeight, price)
-      .send({ from: accounts[0] });
+
+    try {
+      await contract.methods
+        .addItem(color, clarity, cut, caratWeight, price)
+        .send({ from: accounts[0] });
+      message.success('Item successfully added');
+    } catch (e) {
+      console.error('An error occurred in addItem()', e);
+      message.error('An error occurred in addItem()');
+    }
   };
 }

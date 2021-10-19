@@ -2,12 +2,21 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Button } from 'antd';
+import { Form, Input, Button } from 'antd';
 import * as web3Actions from '../actions/web3';
 
 class Supplier extends Component {
-  handleAddItem() {
-    this.props.addItem(0, 0, 'diamond', 2, 10000);
+  formRef = React.createRef();
+
+  constructor(props) {
+    super(props);
+    this.handleFormSubmit = this.handleFormSubmit.bind(this)
+  }
+
+  handleFormSubmit(values) {
+    const { color, clarity, cut, caratWeight, price } = values;
+    this.props.addItem(color, clarity, cut, caratWeight, price);
+    this.formRef.current.resetFields();
   }
 
   render() {
@@ -18,7 +27,29 @@ class Supplier extends Component {
     return (
       <div>
         <h2>Supplier</h2>
-        <Button onClick={this.handleAddItem.bind(this)}>Add Item</Button>
+
+        <Form labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} onFinish={this.handleFormSubmit} ref={this.formRef}>
+          <Form.Item label="Color" name="color" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item label="Clarity" name="clarity" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item label="Cut" name="cut" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item label="Carat Weight" name="caratWeight" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item label="Price" name="price" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+            <Button type="primary" htmlType="submit">
+              Add Item
+            </Button>
+          </Form.Item>
+        </Form>
       </div>
     );
   }
