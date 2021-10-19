@@ -2,8 +2,11 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Form, Input, Button } from 'antd';
+import { Form, Input, Button, Select } from 'antd';
 import * as web3Actions from '../actions/web3';
+import { COLOR, CLARITY } from '../utils/static';
+
+const { Option } = Select;
 
 class Supplier extends Component {
   formRef = React.createRef();
@@ -30,10 +33,18 @@ class Supplier extends Component {
 
         <Form labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} onFinish={this.handleFormSubmit} ref={this.formRef}>
           <Form.Item label="Color" name="color" rules={[{ required: true }]}>
-            <Input />
+            <Select>
+              {COLOR.map((value, index) => (
+                <Option key={index} value={index}>{value}</Option>
+              ))}
+            </Select>
           </Form.Item>
           <Form.Item label="Clarity" name="clarity" rules={[{ required: true }]}>
-            <Input />
+            <Select>
+              {CLARITY.map((value, index) => (
+                <Option key={index} value={index}>{value}</Option>
+              ))}
+            </Select>
           </Form.Item>
           <Form.Item label="Cut" name="cut" rules={[{ required: true }]}>
             <Input />
