@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Card } from 'antd';
 import * as web3Actions from '../actions/web3';
+import { COLOR, CLARITY } from '../utils/static';
 
 class Market extends Component {
   componentDidMount() {
@@ -31,6 +32,8 @@ class Market extends Component {
         Supplier: {item.supplier.supplierName}<br />
         Weight (carat): {item.gem.caratWeight}<br />
         Cut: {item.gem.cut}<br />
+        Color: {COLOR[item.gem.color]}<br />
+        Clarity: {CLARITY[item.gem.clarity]}<br />
       </Card>
     ));
 
