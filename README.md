@@ -34,15 +34,22 @@ Minting NFTs in the Ethereum using [ERC-721](https://ethereum.org/en/developers/
   - Alternative to execute `truffle migrate --network development` if using `ganache-cli`
 - Execute `truffle test` to run unit tests for smart contracts
 
+### MetaMask wallet for Development
+
+- Install [MetaMask browser extension](https://metamask.io/download.html) and open it
+- Create a new network:
+  - Name: `Truffle Develop`
+  - RPC URL: `http://127.0.0.1:9545/`
+  - Chain ID: `1337`
+- Import some accounts from Truffle using their private keys
+- Alternative to use mnemonic as restore phrase, which is provided if using `ganache-cli`
+
 ### UI Development
 
 - Execute `cd client` to change path to main client directory
 - Execute `CI=true npm test` to run all unit tests for the UI
 - Execute `npm start` to start local development server
-- Install [MetaMask browser extension](https://metamask.io/download.html) and use mnemonic provided by `ganache-cli` when started as restore phrase
-  - Make sure to switch network to *Localhost:8545*
 - Open `http://localhost:3000` to see the result, the page will ask to connect to current wallet's account in MetaMask
-- Click *Mint NFT* button to execute a transaction and mint PST token
 
 ## How to run?
 
