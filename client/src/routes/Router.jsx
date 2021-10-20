@@ -32,10 +32,11 @@ class Router extends Component {
 
   render() {
     const { isOwner, isSupplier } = this.props;
+    const activeKey = document.location.pathname.substr(1) || 'market';
     
     return (
       <Layout style={{ minHeight: '100vh' }}>
-        <Menu theme="dark" mode="horizontal" style={{ display: 'flex', justifyContent: 'center' }}>
+        <Menu theme="dark" mode="horizontal" defaultSelectedKeys={[activeKey]} style={{ display: 'flex', justifyContent: 'center' }}>
           <Item key="market">
             <span>Market</span>
             <Link to='/market' />
@@ -51,9 +52,10 @@ class Router extends Component {
         </Menu>
 
         <Content style={{ margin: '24px 16px', padding: 24, background: '#fff', minHeight: 280 }}>
+          <Route exact path="/" component={Market} />
           <Route path="/market" component={Market} />
-          <Route exact path="/supplier" component={Supplier} />
-          <Route exact path="/admin" component={Admin} />
+          <Route path="/supplier" component={Supplier} />
+          <Route path="/admin" component={Admin} />
         </Content>
       </Layout>
     );
