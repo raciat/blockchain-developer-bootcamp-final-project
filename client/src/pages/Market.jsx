@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Card } from 'antd';
 import * as web3Actions from '../actions/web3';
-import { COLOR, CLARITY } from '../utils/static';
 
 class Market extends Component {
   componentDidMount() {
@@ -28,12 +27,13 @@ class Market extends Component {
 
     const itemsElements = availableItems.map((item, index) => (
       <Card key={index} style={{ width: '20%', float: 'left' }}>
-        Price: {item.price}<br />
-        Supplier: {item.supplier.supplierName}<br />
-        Weight (carat): {item.gem.caratWeight}<br />
-        Cut: {item.gem.cut}<br />
-        Color: {COLOR[item.gem.color]}<br />
-        Clarity: {CLARITY[item.gem.clarity]}<br />
+        Name: {item.itemName}<br />
+        Price: {item.price} USD<br />
+        Supplier: {item.supplierName}<br />
+        Weight: {item.caratWeight} ct<br />
+        Cut: {item.cut}<br />
+        Color: {item.color}<br />
+        Clarity: {item.clarity}<br />
       </Card>
     ));
 
@@ -42,7 +42,7 @@ class Market extends Component {
 
   render() {
     const { availableItems } = this.props;
-    
+
     return (
       <div>
         <h2>Market</h2>

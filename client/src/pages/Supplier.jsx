@@ -17,8 +17,8 @@ class Supplier extends Component {
   }
 
   handleFormSubmit(values) {
-    const { color, clarity, cut, caratWeight, price } = values;
-    this.props.addItem(color, clarity, cut, caratWeight, price);
+    const { itemName, color, clarity, cut, caratWeight, price } = values;
+    this.props.addItem(itemName, color, clarity, cut, caratWeight, price);
     this.formRef.current.resetFields();
   }
 
@@ -32,27 +32,30 @@ class Supplier extends Component {
         <h2>Supplier</h2>
 
         <Form labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} onFinish={this.handleFormSubmit} ref={this.formRef}>
+          <Form.Item label="Name" name="itemName" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
           <Form.Item label="Color" name="color" rules={[{ required: true }]}>
             <Select>
               {COLOR.map((value, index) => (
-                <Option key={index} value={index}>{value}</Option>
+                <Option key={index} value={value}>{value}</Option>
               ))}
             </Select>
           </Form.Item>
           <Form.Item label="Clarity" name="clarity" rules={[{ required: true }]}>
             <Select>
               {CLARITY.map((value, index) => (
-                <Option key={index} value={index}>{value}</Option>
+                <Option key={index} value={value}>{value}</Option>
               ))}
             </Select>
           </Form.Item>
           <Form.Item label="Cut" name="cut" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
-          <Form.Item label="Carat Weight" name="caratWeight" rules={[{ required: true }]}>
+          <Form.Item label="Weight [ct]" name="caratWeight" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
-          <Form.Item label="Price" name="price" rules={[{ required: true }]}>
+          <Form.Item label="Price [USD]" name="price" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
