@@ -6,7 +6,7 @@ const contractDefn = ca =>
   ca.ast.nodes.find(n => n.nodeType === CDTYPE && n.name === CNAME);
 
 const items = (ca) => {
-  const item = contractDefn(ca).nodes.find((n) => n.name === 'Diamond');
+  const item = contractDefn(ca).nodes.find((n) => n.name === 'Item');
   if (!item) return null;
 
   return item

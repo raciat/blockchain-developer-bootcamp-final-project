@@ -2,15 +2,17 @@
 pragma solidity ^0.8.2;
 
 import '@openzeppelin/contracts/token/ERC721/ERC721.sol';
-import '@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol';
-import '@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol';
+import '@openzeppelin/contracts/utils/Counters.sol';
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
 /// @title Precious Stones Mint via PST - Precious Stone Non-Fungible Tokens
 /// @author Tomasz Racia
 /// @notice It is a market of precious stones based on NFTs
 /// @dev Based on predefined contracts and extensions with custom logic for precious stones market
 /// @custom:experimental This is an experimental contract
-contract PreciousStoneToken is ERC721, ERC721URIStorage, ERC721Burnable {
+contract PreciousStoneToken is ERC721URIStorage {
+  using Counters for Counters.Counter;
+  Counters.Counter private _tokenIds;
 
   mapping (address => bool) internal owners;
 
@@ -21,19 +23,6 @@ contract PreciousStoneToken is ERC721, ERC721URIStorage, ERC721Burnable {
 
   event LogOwnerAdded(address additionalOwnerAddress);
   event LogOwnerRemoved(address ownerAddress);
-
-  // All available options as diamond's color
-  enum Color { D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z }
-
-  // All available options as diamond's clarity
-  enum Clarity { Flawless, InternallyFlawless, VVS1, VVS2, VS1, VS2, SI1, SI2, I1, I2, I3 }
-
-  struct Diamond {
-    Color color;
-    Clarity clarity;
-    string cut;
-    uint caratWeight;
-  }
 
   struct Supplier {
     address payable supplierAddress;
@@ -47,12 +36,12 @@ contract PreciousStoneToken is ERC721, ERC721URIStorage, ERC721Burnable {
 
   struct Item {
     uint sku;
-    Diamond gem;
     Supplier supplier;
     State state;
     uint price;
+    string ipfsHash;
     address payable buyer;
-    string tokenId;
+    uint tokenId;
   }
 
   mapping (address => Supplier) internal suppliers;
@@ -62,7 +51,7 @@ contract PreciousStoneToken is ERC721, ERC721URIStorage, ERC721Burnable {
   event LogSupplierDeactivated(address supplierAddress);
   event LogSupplierActivated(address supplierAddress);
 
-  event LogItemForSale(uint sku);
+  event LogItemForSale(uint sku, uint tokenId);
   event LogItemSold(uint sku);
 
   modifier onlySuppliers() {
@@ -146,25 +135,21 @@ contract PreciousStoneToken is ERC721, ERC721URIStorage, ERC721Burnable {
     return true;
   }
 
-  function addItem(Color color, Clarity clarity, string memory cut, uint caratWeight, uint price) public onlySuppliers returns (bool) {
-    Diamond memory gem = Diamond({
-      color: color,
-      clarity: clarity,
-      cut: cut,
-      caratWeight: caratWeight
-    });
-
+  function addItem(string memory ipfsHash, uint price) public onlySuppliers returns (bool) {
     items[skuCount] = Item({
       sku: skuCount,
-      gem: gem,
       supplier: suppliers[msg.sender],
       state: State.ForSale,
       price: price,
+      ipfsHash: ipfsHash,
       buyer: payable(address(0)),
-      tokenId: ''
+      tokenId: 0
     });
 
-    emit LogItemForSale(skuCount);
+    uint tokenId = mintItem(msg.sender, ipfsHash);
+    items[skuCount].tokenId = tokenId;
+
+    emit LogItemForSale(skuCount, tokenId);
 
     skuCount += 1;
 
@@ -194,15 +179,17 @@ contract PreciousStoneToken is ERC721, ERC721URIStorage, ERC721Burnable {
     return true;
   }
 
-  function safeMint(address to, uint256 tokenId) internal onlyOwner {
-    _safeMint(to, tokenId);
+  function _baseURI() internal pure override returns (string memory) {
+    return 'https://ipfs.io/ipfs/';
   }
 
-  function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {
-    super._burn(tokenId);
-  }
+  function mintItem(address to, string memory tokenURI) public onlySuppliers returns (uint) {
+    _tokenIds.increment();
+    uint256 id = _tokenIds.current();
 
-  function tokenURI(uint256 tokenId) public view override(ERC721, ERC721URIStorage) returns (string memory) {
-    return super.tokenURI(tokenId);
+    _mint(to, id);
+    _setTokenURI(id, tokenURI);
+
+    return id;
   }
 }
