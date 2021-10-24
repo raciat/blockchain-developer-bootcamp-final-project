@@ -8,7 +8,7 @@ const { items: ItemStruct, isDefined, isType } = require('./ast-helper');
  * See docs: https://www.trufflesuite.com/docs/truffle/testing/writing-tests-in-javascript
  */
 contract('PreciousStoneToken', function (accounts) {
-  const [contractOwner, additionalOwner, account3, account4] = accounts;
+  const [contractOwner, additionalAdmin, account3, account4] = accounts;
   let instance;
 
   beforeEach(async () => {
@@ -76,39 +76,39 @@ contract('PreciousStoneToken', function (accounts) {
     });
   });
 
-  describe('Owners', () => {
-    it('should have an owner', async () => {
-      const result = await instance.isOwner(contractOwner);
+  describe('Admins', () => {
+    it('should have an admin', async () => {
+      const result = await instance.isAdmin(contractOwner);
 
-      assert.equal(result.valueOf(), true, 'The contract has no owner');
+      assert.equal(result.valueOf(), true, 'The contract has no admin');
     });
 
-    it('should confirm account is an owner', async function () {
-      await instance.addOwner(additionalOwner);
-      const result = await instance.isOwner(additionalOwner);
+    it('should confirm account is an admin', async function () {
+      await instance.addAdmin(additionalAdmin);
+      const result = await instance.isAdmin(additionalAdmin);
 
-      assert.equal(result.valueOf(), true, 'Incorrect owner returned');
+      assert.equal(result.valueOf(), true, 'Incorrect admin returned');
     });
 
-    it('should confirm account is not an owner', async function () {
-      await instance.removeOwner(additionalOwner);
-      const result = await instance.isOwner(additionalOwner);
+    it('should confirm account is not an admin', async function () {
+      await instance.removeAdmin(additionalAdmin);
+      const result = await instance.isAdmin(additionalAdmin);
 
-      assert.equal(result.valueOf(), false, 'Incorrect owner returned');
-    });
-    
-    it('should add additional owner', async function () {
-      const result = await instance.addOwner(additionalOwner);
-      const logAdditionalOwnerAddress = result.logs[0].args.additionalOwnerAddress;
-
-      assert.equal(additionalOwner, logAdditionalOwnerAddress, 'LogOwnerAdded event with `additionalOwnerAddress` property not emitted');
+      assert.equal(result.valueOf(), false, 'Incorrect admin returned');
     });
     
-    it('should remove an owner', async function () {
-      const result = await instance.removeOwner(additionalOwner);
-      const logOwnerAddress = result.logs[0].args.ownerAddress;
+    it('should add additional admin', async function () {
+      const result = await instance.addAdmin(additionalAdmin);
+      const logAdditionalAdminAddress = result.logs[0].args.additionalAdminAddress;
 
-      assert.equal(additionalOwner, logOwnerAddress, 'LogOwnerRemoved event with `ownerAddress` property not emitted');
+      assert.equal(additionalAdmin, logAdditionalAdminAddress, 'LogAdminAdded event with `additionalAdminAddress` property not emitted');
+    });
+    
+    it('should remove an admin', async function () {
+      const result = await instance.removeAdmin(additionalAdmin);
+      const logAdminAddress = result.logs[0].args.adminAddress;
+
+      assert.equal(additionalAdmin, logAdminAddress, 'LogAdminRemoved event with `adminAddress` property not emitted');
     });
   });
 
@@ -155,7 +155,7 @@ contract('PreciousStoneToken', function (accounts) {
       await instance.addSupplier(account3, 'Supplier 1', { from: contractOwner });
       
       const result = await instance.addItem('QmWd2umLNGQpNYBrPVX8qR4r9YFeAQgLNs27Vxw8L5KP6A', 10000, { from: account3 });
-      const logSku = result.logs[1].args.sku;
+      const logSku = result.logs[0].args.sku;
 
       assert.equal(0, logSku, 'LogItemForSale event with `skuCount` property not emitted');
     });
@@ -163,8 +163,12 @@ contract('PreciousStoneToken', function (accounts) {
     it('should set an item as sold', async function () {
       const skuCount = 0;
       const result = await instance.buyItem(skuCount, { from: account4 });
-      const logSku = result.logs[0].args.sku;
+      const mintTo = result.logs[0].args.to;
+      const tokenId = result.logs[0].args.tokenId;
+      const logSku = result.logs[1].args.sku;
 
+      assert.equal(account4, mintTo, 'LogItemSold event with `mintTo` property not emitted');
+      assert.equal(1, tokenId, 'LogItemSold event with `tokenId` property not emitted');
       assert.equal(skuCount, logSku, 'LogItemSold event with `skuCount` property not emitted');
     });
   });

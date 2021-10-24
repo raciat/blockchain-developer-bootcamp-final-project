@@ -15,7 +15,7 @@ class Market extends Component {
     this.fetchData();
   }
   
-  componentDidUpdate (prevProps) {
+  componentDidUpdate(prevProps) {
     if (!prevProps.web3 && this.props.web3) {
       this.fetchData();
     }

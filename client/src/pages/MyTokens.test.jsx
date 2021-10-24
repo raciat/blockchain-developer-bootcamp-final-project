@@ -2,14 +2,14 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import Admin from './Admin';
+import MyTokens from './MyTokens';
 
 const mockStore = configureStore([thunk]);
 
-describe('pages/Admin', () => {
+describe('pages/MyTokens', () => {
   test('should render without crashing', () => {
-    const store = mockStore({ web3: { isAdmin: true } });
-    const page = shallow(<Admin store={store} />).dive().dive();
+    const store = mockStore({ web3: { myBalance: 0, myTokens: [] } });
+    const page = shallow(<MyTokens store={store} />).dive().dive();
 
     expect(page.find('div').length).toEqual(1);
   });

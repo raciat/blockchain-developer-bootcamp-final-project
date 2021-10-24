@@ -6,6 +6,7 @@ import { Route, Link } from 'react-router-dom';
 import { Layout, Menu } from 'antd';
 import * as web3Actions from '../actions/web3';
 import Market from '../pages/Market';
+import MyTokens from '../pages/MyTokens';
 import Supplier from '../pages/Supplier';
 import Admin from '../pages/Admin';
 
@@ -25,15 +26,16 @@ class Router extends Component {
 
   fetchData() {
     if (this.props.web3) {
-      this.props.getIsOwner();
+      this.props.getIsAdmin();
       this.props.getIsSupplier();
+      this.props.getMyBalance();
     }
   }
 
   render() {
-    const { isOwner, isSupplier } = this.props;
+    const { isAdmin, isSupplier, myBalance } = this.props;
     const activeKey = document.location.pathname.substr(1) || 'market';
-    
+
     return (
       <Layout style={{ minHeight: '100vh' }}>
         <Menu theme="dark" mode="horizontal" defaultSelectedKeys={[activeKey]} style={{ display: 'flex', justifyContent: 'center' }}>
@@ -45,15 +47,20 @@ class Router extends Component {
             <span>Supplier</span>
             <Link to='/supplier' />
           </Item>)}
-          {isOwner && (<Item key="admin">
+          {isAdmin && (<Item key="admin">
             <span>Admin</span>
             <Link to='/admin' />
+          </Item>)}
+          {myBalance && myBalance > 0 && (<Item key="my-tokens">
+            <span>My Tokens</span>
+            <Link to='/my-tokens' />
           </Item>)}
         </Menu>
 
         <Content style={{ margin: '24px 16px', padding: 24, background: '#fff', minHeight: 280 }}>
           <Route exact path="/" component={Market} />
           <Route path="/market" component={Market} />
+          <Route path="/my-tokens" component={MyTokens} />
           <Route path="/supplier" component={Supplier} />
           <Route path="/admin" component={Admin} />
         </Content>
@@ -64,18 +71,21 @@ class Router extends Component {
 
 Router.propTypes = {
   web3: PropTypes.object,
-  isOwner: PropTypes.bool,
+  isAdmin: PropTypes.bool,
   isSupplier: PropTypes.bool,
+  myBalance: PropTypes.number,
   getConnection: PropTypes.func,
-  getIsOwner: PropTypes.func,
+  getIsAdmin: PropTypes.func,
   getIsSupplier: PropTypes.func,
+  getMyBalance: PropTypes.func,
 };
 
 export default connect(
   (state) => ({
     web3: state.web3.web3,
-    isOwner: state.web3.isOwner, 
+    isAdmin: state.web3.isAdmin,
     isSupplier: state.web3.isSupplier,
+    myBalance: state.web3.myBalance,
   }),
   (dispatch) => bindActionCreators(web3Actions, dispatch),
 )(Router);

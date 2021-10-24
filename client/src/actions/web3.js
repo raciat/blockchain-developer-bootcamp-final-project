@@ -18,9 +18,11 @@ const ipfsClient = create({ host: 'ipfs.infura.io', port: 5001, protocol: 'https
 
 export const WEB3_ACTION_TYPES = {
   WEB3_CONNECT: 'WEB3_CONNECT',
-  WEB3_IS_OWNER: 'WEB3_IS_OWNER',
+  WEB3_IS_ADMIN: 'WEB3_IS_ADMIN',
   WEB3_IS_SUPPLIER: 'WEB3_IS_SUPPLIER',
+  WEB3_MY_BALANCE: 'WEB3_MY_BALANCE',
   WEB3_AVAILABLE_ITEMS: 'WEB3_AVAILABLE_ITEMS',
+  WEB3_MY_TOKENS: 'WEB3_MY_TOKENS',
 };
 
 export const setConnection = data => ({
@@ -28,8 +30,8 @@ export const setConnection = data => ({
   data,
 });
 
-export const setIsOwner = data => ({
-  type: WEB3_ACTION_TYPES.WEB3_IS_OWNER,
+export const setIsAdmin = data => ({
+  type: WEB3_ACTION_TYPES.WEB3_IS_ADMIN,
   data,
 });
 
@@ -38,8 +40,18 @@ export const setIsSupplier = data => ({
   data,
 });
 
+export const setMyBalance = data => ({
+  type: WEB3_ACTION_TYPES.WEB3_MY_BALANCE,
+  data,
+});
+
 export const setAvailableItems = data => ({
   type: WEB3_ACTION_TYPES.WEB3_AVAILABLE_ITEMS,
+  data,
+});
+
+export const setMyTokens = data => ({
+  type: WEB3_ACTION_TYPES.WEB3_MY_TOKENS,
   data,
 });
 
@@ -61,17 +73,17 @@ export function getConnection() {
   };
 }
 
-export function getIsOwner() {
+export function getIsAdmin() {
   return async (dispatch, getState) => {
     const web3 = getState().web3;
     const { accounts, contract } = web3;
 
     try {
-      const isOwner = await contract.methods.isOwner(accounts[0]).call();
-      dispatch(setIsOwner(isOwner));
+      const isAdmin = await contract.methods.isAdmin(accounts[0]).call();
+      dispatch(setIsAdmin(isAdmin));
     } catch (e) {
-      console.error('An error occurred in isOwner()', e);
-      message.error('An error occurred while getting info about owner access right');
+      console.error('An error occurred in isAdmin()', e);
+      message.error('An error occurred while getting info about admin access right');
     }
   };
 }
@@ -87,6 +99,21 @@ export function getIsSupplier() {
     } catch (e) {
       console.error('An error occurred in isSupplier()', e);
       message.error('An error occurred while getting info about supplier access right');
+    }
+  };
+}
+
+export function getMyBalance() {
+  return async (dispatch, getState) => {
+    const web3 = getState().web3;
+    const { accounts, contract } = web3;
+
+    try {
+      const myBalance = await contract.methods.balanceOf(accounts[0]).call();
+      dispatch(setMyBalance(parseInt(myBalance, 10)));
+    } catch (e) {
+      console.error('An error occurred in getMyBalance()', e);
+      message.error('An error occurred while getting info about balance');
     }
   };
 }
@@ -116,11 +143,11 @@ export function getAvailableItems() {
 
     try {
       const availableItems = await contract.methods.getAvailableItems().call();
-      console.log('availableItems', availableItems);
 
       const items = [];
       for await (const item of availableItems) {
         const { sku, ipfsHash, price, tokenId, supplier } = item;
+        if (!ipfsHash) { continue; }
         const ipfsData = await getFromIPFS(ipfsHash);
         const itemData = { sku, ipfsHash, price, tokenId, supplierName: supplier.supplierName, ...ipfsData };
         items.push(itemData);
@@ -157,9 +184,7 @@ export function addItem(itemName, color, clarity, cut, caratWeight, price) {
     const web3 = getState().web3;
     const { accounts, contract } = web3;
 
-    const metaData = {
-      itemName, color, clarity, cut, caratWeight, price,
-    };
+    const metaData = { itemName, color, clarity, cut, caratWeight };
     const ipfsResult = await ipfsClient.add(JSON.stringify(metaData));
     if (!ipfsResult || !ipfsResult.path) {
       console.error('An error occurred in addItem() while uploading to IPFS');
@@ -195,6 +220,30 @@ export function buyItem(sku, price) {
     } catch (e) {
       console.error('An error occurred in buyItem()', e);
       message.error('An error occurred while purchasing an item');
+    }
+  };
+}
+
+export function getMyTokens(balance) {
+  return async (dispatch, getState) => {
+    const web3 = getState().web3;
+    const { accounts, contract } = web3;
+    const tokens = [];
+
+    try {
+      for (let tokenIndex = 0; tokenIndex < balance; tokenIndex++) {
+        const tokenId = await contract.methods.tokenOfOwnerByIndex(accounts[0], tokenIndex).call();
+        const tokenURI = await contract.methods.tokenURI(tokenId).call();
+        const ipfsHash = tokenURI.replace('https://ipfs.io/ipfs/', '');
+        const ipfsData = await getFromIPFS(ipfsHash);
+
+        tokens.push(ipfsData);
+      }
+
+      dispatch(setMyTokens(tokens));
+    } catch (e) {
+      console.error('An error occurred in getMyTokens()', e);
+      message.error('An error occurred while fetching list of your tokens');
     }
   };
 }

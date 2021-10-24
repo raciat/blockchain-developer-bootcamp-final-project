@@ -20,9 +20,9 @@ class Admin extends Component {
   }
   
   render() {
-    const { isOwner } = this.props;
+    const { isAdmin } = this.props;
 
-    if (!isOwner) { return null; }
+    if (!isAdmin) { return null; }
 
     return (
       <div>
@@ -48,14 +48,14 @@ class Admin extends Component {
 
 Admin.propTypes = {
   accounts: PropTypes.array,
-  isOwner: PropTypes.bool,
+  isAdmin: PropTypes.bool,
   addSupplier: PropTypes.func,
 };
 
 export default connect(
   (state) => ({
     accounts: state.web3.accounts,
-    isOwner: state.web3.isOwner,
+    isAdmin: state.web3.isAdmin,
   }),
   (dispatch) => bindActionCreators(web3Actions, dispatch),
 )(Admin);

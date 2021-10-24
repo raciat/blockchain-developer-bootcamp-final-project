@@ -2,27 +2,28 @@
 pragma solidity ^0.8.2;
 
 import '@openzeppelin/contracts/token/ERC721/ERC721.sol';
+import '@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol';
+import '@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol';
+import '@openzeppelin/contracts/access/Ownable.sol';
 import '@openzeppelin/contracts/utils/Counters.sol';
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-
 /// @title Precious Stones Mint via PST - Precious Stone Non-Fungible Tokens
 /// @author Tomasz Racia
 /// @notice It is a market of precious stones based on NFTs
 /// @dev Based on predefined contracts and extensions with custom logic for precious stones market
 /// @custom:experimental This is an experimental contract
-contract PreciousStoneToken is ERC721URIStorage {
+contract PreciousStoneToken is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
   using Counters for Counters.Counter;
   Counters.Counter private _tokenIds;
 
-  mapping (address => bool) internal owners;
+  mapping (address => bool) internal admins;
 
-  modifier onlyOwner() {
-    require(owners[msg.sender] == true, 'Not an owner');
+  modifier onlyAdmins {
+    require(admins[msg.sender] == true, 'Not an admin');
     _;
   }
 
-  event LogOwnerAdded(address additionalOwnerAddress);
-  event LogOwnerRemoved(address ownerAddress);
+  event LogAdminAdded(address additionalAdminAddress);
+  event LogAdminRemoved(address adminAddress);
 
   struct Supplier {
     address payable supplierAddress;
@@ -51,8 +52,8 @@ contract PreciousStoneToken is ERC721URIStorage {
   event LogSupplierDeactivated(address supplierAddress);
   event LogSupplierActivated(address supplierAddress);
 
-  event LogItemForSale(uint sku, uint tokenId);
-  event LogItemSold(uint sku);
+  event LogItemForSale(uint sku);
+  event LogItemSold(uint sku, uint tokenId);
 
   modifier onlySuppliers() {
     require(suppliers[msg.sender].active == true, 'Not a supplier');
@@ -80,25 +81,25 @@ contract PreciousStoneToken is ERC721URIStorage {
   }
 
   constructor() ERC721('PreciousStoneToken', 'PST') {
-    owners[msg.sender] = true;
+    admins[msg.sender] = true;
   }
 
-  function isOwner(address ownerAddress) public view returns (bool) {
-    return owners[ownerAddress] ? true : false;
+  function isAdmin(address adminAddress) public view returns (bool) {
+    return admins[adminAddress] ? true : false;
   }
 
-  function addOwner(address additionalOwnerAddress) public onlyOwner returns (bool) {
-    owners[additionalOwnerAddress] = true;
+  function addAdmin(address additionalAdminAddress) public onlyAdmins returns (bool) {
+    admins[additionalAdminAddress] = true;
 
-    emit LogOwnerAdded(additionalOwnerAddress);
+    emit LogAdminAdded(additionalAdminAddress);
 
     return true;
   }
 
-  function removeOwner(address ownerAddress) public onlyOwner returns (bool) {
-    delete owners[ownerAddress];
+  function removeAdmin(address adminAddress) public onlyAdmins returns (bool) {
+    delete admins[adminAddress];
 
-    emit LogOwnerRemoved(ownerAddress);
+    emit LogAdminRemoved(adminAddress);
 
     return true;
   }
@@ -107,7 +108,7 @@ contract PreciousStoneToken is ERC721URIStorage {
     return suppliers[supplierAddress].active ? true : false;
   }
 
-  function addSupplier(address payable supplierAddress, string memory supplierName) public onlyOwner returns (bool) {
+  function addSupplier(address payable supplierAddress, string memory supplierName) public onlyAdmins returns (bool) {
     suppliers[supplierAddress] = Supplier({
       supplierAddress: supplierAddress,
       supplierName: supplierName,
@@ -119,7 +120,7 @@ contract PreciousStoneToken is ERC721URIStorage {
     return true;
   }
 
-  function activateSupplier(address payable supplierAddress) public onlyOwner returns (bool) {
+  function activateSupplier(address payable supplierAddress) public onlyAdmins returns (bool) {
     suppliers[supplierAddress].active = true;
 
     emit LogSupplierActivated(supplierAddress);
@@ -127,7 +128,7 @@ contract PreciousStoneToken is ERC721URIStorage {
     return true;
   }
 
-  function deactivateSupplier(address payable supplierAddress) public onlyOwner returns (bool) {
+  function deactivateSupplier(address payable supplierAddress) public onlyAdmins returns (bool) {
     suppliers[supplierAddress].active = false;
 
     emit LogSupplierDeactivated(supplierAddress);
@@ -146,10 +147,7 @@ contract PreciousStoneToken is ERC721URIStorage {
       tokenId: 0
     });
 
-    uint tokenId = mintItem(msg.sender, ipfsHash);
-    items[skuCount].tokenId = tokenId;
-
-    emit LogItemForSale(skuCount, tokenId);
+    emit LogItemForSale(skuCount);
 
     skuCount += 1;
 
@@ -171,10 +169,13 @@ contract PreciousStoneToken is ERC721URIStorage {
   function buyItem(uint sku) public payable forSale(sku) paidEnough(items[sku].price) checkValue(sku) returns (bool) {
     items[sku].supplier.supplierAddress.transfer(items[sku].price);
 
+    uint tokenId = mintItem(msg.sender, items[sku].ipfsHash);
+    items[sku].tokenId = tokenId;
+
     items[sku].buyer = payable(msg.sender);
     items[sku].state = State.Sold;
 
-    emit LogItemSold(sku);
+    emit LogItemSold(sku, tokenId);
     
     return true;
   }
@@ -183,12 +184,28 @@ contract PreciousStoneToken is ERC721URIStorage {
     return 'https://ipfs.io/ipfs/';
   }
 
-  function mintItem(address to, string memory tokenURI) public onlySuppliers returns (uint) {
+  function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal override(ERC721, ERC721Enumerable) {
+    super._beforeTokenTransfer(from, to, tokenId);
+  }
+
+  function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {
+    super._burn(tokenId);
+  }
+
+  function tokenURI(uint256 tokenId) public view override(ERC721, ERC721URIStorage) returns (string memory) {
+    return super.tokenURI(tokenId);
+  }
+
+  function supportsInterface(bytes4 interfaceId) public view override(ERC721, ERC721Enumerable) returns (bool) {
+    return super.supportsInterface(interfaceId);
+  }
+
+  function mintItem(address to, string memory _tokenURI) internal returns (uint) {
     _tokenIds.increment();
     uint256 id = _tokenIds.current();
 
     _mint(to, id);
-    _setTokenURI(id, tokenURI);
+    _setTokenURI(id, _tokenURI);
 
     return id;
   }
