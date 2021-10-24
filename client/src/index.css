@@ -10,3 +10,9 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }
+
+.ant-message {
+  position: absolute;
+  bottom: 20px !important;
+  top: unset !important;
+}
