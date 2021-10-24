@@ -55,10 +55,20 @@ Minting NFTs in the Ethereum using [ERC-721](https://ethereum.org/en/developers/
 
 ### Deploying the contract to Ropsten via Infura
 - Create new project in [Infura](https://infura.io)
-- Copy endpoint URL for Ropsten testnet and set as `INFURA_URL` environment variable in `.env` file
-- Copy restore phrase from MetaMask and set as `MNEMONIC` environment variable in `.env` file
 - Use [Ropsten Faucet](https://faucet.ropsten.be) to get some Ether for default account in Ropsten testnet, to be able to deploy the smart contract
-- Execute `truffle migrate --network ropsten` to deploy smart contracts to Ropsten testnet
+- Compile and deploy via Truffle:
+  - Copy endpoint URL for Ropsten testnet and set as `INFURA_URL` environment variable in `.env` file
+  - Copy restore phrase from MetaMask and set as `MNEMONIC` environment variable in `.env` file
+  - Execute `truffle migrate --network ropsten` to deploy smart contracts to Ropsten testnet
+- Compile and deploy via [Remix](https://remix.ethereum.org/):
+  - Copy content of `PreciousStoneToke.sol` and paste into Remix on the first tab called *File Explorer*
+  - Compile the code on the second tab called *Solidity Compiler*
+  - Open MetaMask, select Ropsten network and proper account with some test ether there, and click *Connect*
+  - Open third tab called *Deploy and run transactions*:
+    - Choose *Injected Web3* environment
+    - Select proper account (make sure it is connected to Remix in MetaMask)
+    - Select proper contract (*PreciousStoneToken*)
+    - Hit *Deploy*
 - Use [Ropsten Etherscan](https://ropsten.etherscan.io) page to see details of deployed contract using its address
 
 ### Running on Heroku
