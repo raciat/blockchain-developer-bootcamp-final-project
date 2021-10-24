@@ -237,13 +237,31 @@ export function getMyTokens(balance) {
         const ipfsHash = tokenURI.replace('https://ipfs.io/ipfs/', '');
         const ipfsData = await getFromIPFS(ipfsHash);
 
-        tokens.push(ipfsData);
+        tokens.push({ ...ipfsData, tokenId });
       }
 
       dispatch(setMyTokens(tokens));
     } catch (e) {
       console.error('An error occurred in getMyTokens()', e);
       message.error('An error occurred while fetching list of your tokens');
+    }
+  };
+}
+
+export function transferToken(ethAddress, tokenId) {
+  return async (dispatch, getState) => {
+    const web3 = getState().web3;
+    const { accounts, contract } = web3;
+
+    try {
+      await contract.methods
+        .transferFrom(accounts[0], ethAddress, tokenId)
+        .send({ from: accounts[0] });
+
+      message.success('Token successfully transferred');
+    } catch (e) {
+      console.error('An error occurred in transferToken()', e);
+      message.error('An error occurred while transferring a token');
     }
   };
 }

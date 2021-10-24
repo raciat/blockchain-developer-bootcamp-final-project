@@ -2,10 +2,17 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Card } from 'antd';
+import { Card, Input, message } from 'antd';
 import * as web3Actions from '../actions/web3';
 
+const { Search } = Input;
+
 class MyTokens extends Component {
+  constructor(props) {
+    super(props);
+    this.handleTransfer = this.handleTransfer.bind(this);
+  }
+
   componentDidMount() {
     this.fetchData();
   }
@@ -22,6 +29,15 @@ class MyTokens extends Component {
     }
   }
 
+  handleTransfer(ethAddress, tokenId) {
+    if (!ethAddress || !ethAddress.match(/0x[\w]{40}/)) {
+      message.error('Incorrect Ethereum address used!');
+      return;
+    }
+
+    this.props.transferToken(ethAddress, tokenId);
+  }
+
   renderTokens(myTokens) {
     if (myTokens.length === 0) { return null; }
 
@@ -32,6 +48,12 @@ class MyTokens extends Component {
         Cut: {token.cut}<br />
         Color: {token.color}<br />
         Clarity: {token.clarity}<br />
+
+        <Search
+          enterButton="Transfer"
+          onSearch={(ethAddress) => this.handleTransfer(ethAddress, token.tokenId)}
+          style={{ marginTop: '20px' }}
+        />
       </Card>
     ));
 
@@ -55,6 +77,7 @@ MyTokens.propTypes = {
   myBalance: PropTypes.number,
   myTokens: PropTypes.array,
   getMyTokens: PropTypes.func,
+  transferToken: PropTypes.func,
 };
 
 export default connect(
