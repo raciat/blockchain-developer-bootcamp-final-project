@@ -2,6 +2,7 @@ import { message } from 'antd';
 import { Buffer } from 'buffer';
 import { create } from 'ipfs-http-client';
 import { BufferList } from 'bl';
+import { toWei } from 'web3-utils';
 import getWeb3 from '../utils/getWeb3';
 import PreciousStoneContract from '../contracts/PreciousStoneToken.json';
 
@@ -115,12 +116,13 @@ export function getAvailableItems() {
 
     try {
       const availableItems = await contract.methods.getAvailableItems().call();
+      console.log('availableItems', availableItems);
 
       const items = [];
       for await (const item of availableItems) {
-        const { ipfsHash, price, tokenId, supplier } = item;
+        const { sku, ipfsHash, price, tokenId, supplier } = item;
         const ipfsData = await getFromIPFS(ipfsHash);
-        const itemData = { ipfsHash, price, tokenId, supplierName: supplier.supplierName, ...ipfsData };
+        const itemData = { sku, ipfsHash, price, tokenId, supplierName: supplier.supplierName, ...ipfsData };
         items.push(itemData);
       }
 
@@ -170,10 +172,29 @@ export function addItem(itemName, color, clarity, cut, caratWeight, price) {
         .addItem(ipfsResult.path, price)
         .send({ from: accounts[0] });
 
+      console.log('Item successfully added', ipfsResult.path);
       message.success('Item successfully added');
     } catch (e) {
       console.error('An error occurred in addItem()', e);
       message.error('An error occurred while adding an item');
+    }
+  };
+}
+
+export function buyItem(sku, price) {
+  return async (dispatch, getState) => {
+    const web3 = getState().web3;
+    const { accounts, contract } = web3;
+
+    try {
+      await contract.methods
+        .buyItem(sku)
+        .send({ from: accounts[0], value: toWei(price, 'ether') });
+
+      message.success('Item successfully purchased');
+    } catch (e) {
+      console.error('An error occurred in buyItem()', e);
+      message.error('An error occurred while purchasing an item');
     }
   };
 }
