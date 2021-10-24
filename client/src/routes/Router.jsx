@@ -41,19 +41,19 @@ class Router extends Component {
         <Menu theme="dark" mode="horizontal" defaultSelectedKeys={[activeKey]} style={{ display: 'flex', justifyContent: 'center' }}>
           <Item key="market">
             <span>Market</span>
-            <Link to='/market' />
+            <Link to="/market" />
           </Item>
+          {(!!myBalance && myBalance > 0) && (<Item key="my-tokens">
+            <span>My Tokens</span>
+            <Link to="/my-tokens" />
+          </Item>)}
           {isSupplier && (<Item key="supplier">
             <span>Supplier</span>
-            <Link to='/supplier' />
+            <Link to="/supplier" />
           </Item>)}
           {isAdmin && (<Item key="admin">
             <span>Admin</span>
-            <Link to='/admin' />
-          </Item>)}
-          {myBalance && myBalance > 0 && (<Item key="my-tokens">
-            <span>My Tokens</span>
-            <Link to='/my-tokens' />
+            <Link to="/admin" />
           </Item>)}
         </Menu>
 
