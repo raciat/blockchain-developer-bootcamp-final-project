@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Card, Input, message } from 'antd';
+import { Card, Input, Image, Col, Row, message } from 'antd';
 import * as web3Actions from '../actions/web3';
 
 const { Search } = Input;
@@ -42,22 +42,32 @@ class MyTokens extends Component {
     if (myTokens.length === 0) { return null; }
 
     const tokenElements = myTokens.map((token, index) => (
-      <Card key={index} style={{ width: '20%', float: 'left' }}>
-        Name: {token.itemName}<br />
-        Weight: {token.caratWeight} ct<br />
-        Cut: {token.cut}<br />
-        Color: {token.color}<br />
-        Clarity: {token.clarity}<br />
+      <Col className="gutter-row" xs={24} sm={12} md={12} lg={8} xl={6} key={index}>
+        <Card>
+          <Image width={200} height={200} src={token.image} preview={false} />
 
-        <Search
-          enterButton="Transfer"
-          onSearch={(ethAddress) => this.handleTransfer(ethAddress, token.tokenId)}
-          style={{ marginTop: '20px' }}
-        />
-      </Card>
+          <p>
+            Name: {token.itemName}<br />
+            Weight: {token.caratWeight} ct<br />
+            Cut: {token.cut}<br />
+            Color: {token.color}<br />
+            Clarity: {token.clarity}<br />
+          </p>
+
+          <Search
+            enterButton="Transfer"
+            onSearch={(ethAddress) => this.handleTransfer(ethAddress, token.tokenId)}
+            style={{ marginTop: '20px' }}
+          />
+        </Card>
+      </Col>
     ));
 
-    return <ul style={{ marginTop: '50px' }}>{tokenElements}</ul>;
+    return (
+      <Row gutter={[16, 24]}>
+        {tokenElements}
+      </Row>
+    );
   }
 
   render() {

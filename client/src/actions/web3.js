@@ -213,7 +213,7 @@ export function getMyTokens(balance) {
         const ipfsHash = tokenURI.replace('https://ipfs.io/ipfs/', '');
         const ipfsData = await getFromIPFS(ipfsHash);
 
-        tokens.push({ ...ipfsData, tokenId });
+        tokens.push({ ...ipfsData, image: 'https://ipfs.io/ipfs/' + ipfsData.image, tokenId });
       }
 
       dispatch(setMyTokens(tokens));
