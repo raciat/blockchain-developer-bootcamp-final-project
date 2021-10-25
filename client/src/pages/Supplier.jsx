@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Form, Input, Button, Select, message } from 'antd';
+import { Form, Input, Button, Select } from 'antd';
 import * as web3Actions from '../actions/web3';
 import { COLOR, CLARITY } from '../utils/static';
 import { ipfsClient } from '../utils/ipfsClient';
