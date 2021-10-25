@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Card, Button } from 'antd';
+import { Card, Button, Image, Col, Row } from 'antd';
+import { ShoppingCartOutlined } from '@ant-design/icons';
 import * as web3Actions from '../actions/web3';
 
 class Market extends Component {
@@ -35,20 +36,32 @@ class Market extends Component {
     if (availableItems.length === 0) { return null; }
 
     const itemsElements = availableItems.map((item, index) => (
-      <Card key={index} style={{ width: '20%', float: 'left' }}>
-        Name: {item.itemName}<br />
-        Price: {item.price} USD<br />
-        Supplier: {item.supplierName}<br />
-        Weight: {item.caratWeight} ct<br />
-        Cut: {item.cut}<br />
-        Color: {item.color}<br />
-        Clarity: {item.clarity}<br />
+      <Col className="gutter-row" xs={24} sm={12} md={12} lg={8} xl={6} key={index}>
+        <Card>
+          <Image width={200} height={200} src={item.image} preview={false} />
 
-        <Button onClick={() => this.handleBuy(item.sku, item.price)}>Buy</Button>
-      </Card>
+          <p>
+            Name: {item.itemName}<br />
+            Price: {item.price} USD<br />
+            Supplier: {item.supplierName}<br />
+            Weight: {item.caratWeight} ct<br />
+            Cut: {item.cut}<br />
+            Color: {item.color}<br />
+            Clarity: {item.clarity}<br />
+          </p>
+
+          <Button type="primary" icon={<ShoppingCartOutlined />} onClick={() => this.handleBuy(item.sku, item.price)}>
+            Buy
+          </Button>
+        </Card>
+      </Col>
     ));
 
-    return <ul style={{ marginTop: '50px' }}>{itemsElements}</ul>;
+    return (
+      <Row gutter={[16, 24]}>
+        {itemsElements}
+      </Row>
+    );
   }
 
   render() {

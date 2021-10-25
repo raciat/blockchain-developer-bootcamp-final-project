@@ -1,20 +1,10 @@
 import { message } from 'antd';
-import { Buffer } from 'buffer';
-import { create } from 'ipfs-http-client';
-import { BufferList } from 'bl';
 import { toWei } from 'web3-utils';
 import getWeb3 from '../utils/getWeb3';
+import { ipfsClient, getFromIPFS } from '../utils/ipfsClient';
 import PreciousStoneContract from '../contracts/PreciousStoneToken.json';
 
 const CONTRACT_ADDRESS = process.env.REACT_APP_CONTRACT_ADDRESS;
-const IPFS_PROJECT_ID = process.env.REACT_APP_IPFS_PROJECT_IT;
-const IPFS_PROJECT_SECRET = process.env.REACT_APP_IPFS_PROJECT_SECRET;
-
-const ipfsHeaders = {};
-if (IPFS_PROJECT_ID && IPFS_PROJECT_SECRET) {
-  ipfsHeaders.authorization = 'Basic ' + Buffer.from(IPFS_PROJECT_ID + ':' + IPFS_PROJECT_SECRET).toString('base64');
-}
-const ipfsClient = create({ host: 'ipfs.infura.io', port: 5001, protocol: 'https', headers: ipfsHeaders });
 
 export const WEB3_ACTION_TYPES = {
   WEB3_CONNECT: 'WEB3_CONNECT',
@@ -118,24 +108,6 @@ export function getMyBalance() {
   };
 }
 
-const getFromIPFS = async hashToGet => {
-  const content = new BufferList();
-  for await (const file of ipfsClient.get(hashToGet)) {
-    content.append(file);
-  }
-
-  let parsedContent = content.toString();
-  parsedContent = parsedContent.slice(parsedContent.indexOf('{'));
-  parsedContent = parsedContent.slice(0, parsedContent.indexOf('}') + 1);
-
-  let json = {};
-  try {
-    json = JSON.parse(parsedContent);
-  } catch (e) {}
-
-  return json;
-};
-
 export function getAvailableItems() {
   return async (dispatch, getState) => {
     const web3 = getState().web3;
@@ -149,7 +121,10 @@ export function getAvailableItems() {
         const { sku, ipfsHash, price, tokenId, supplier } = item;
         if (!ipfsHash) { continue; }
         const ipfsData = await getFromIPFS(ipfsHash);
-        const itemData = { sku, ipfsHash, price, tokenId, supplierName: supplier.supplierName, ...ipfsData };
+        const itemData = {
+          sku, ipfsHash, price, tokenId, supplierName: supplier.supplierName,
+          ...ipfsData, image: 'https://ipfs.io/ipfs/' + ipfsData.image,
+        };
         items.push(itemData);
       }
 
@@ -179,25 +154,26 @@ export function addSupplier(supplierAddress, supplierName) {
   };
 }
 
-export function addItem(itemName, color, clarity, cut, caratWeight, price) {
+export function addItem(itemName, color, clarity, cut, caratWeight, price, image) {
   return async (dispatch, getState) => {
     const web3 = getState().web3;
     const { accounts, contract } = web3;
 
-    const metaData = { itemName, color, clarity, cut, caratWeight };
+    const metaData = { itemName, color, clarity, cut, caratWeight, image };
     const ipfsResult = await ipfsClient.add(JSON.stringify(metaData));
     if (!ipfsResult || !ipfsResult.path) {
       console.error('An error occurred in addItem() while uploading to IPFS');
       message.error('An error occurred while uploading to IPFS');
       return;
     }
+    console.log('Metadata successfully uploaded to IPFS', ipfsResult.path);
 
     try {
       await contract.methods
         .addItem(ipfsResult.path, price)
         .send({ from: accounts[0] });
 
-      console.log('Item successfully added', ipfsResult.path);
+      console.log('Item successfully added');
       message.success('Item successfully added');
     } catch (e) {
       console.error('An error occurred in addItem()', e);
