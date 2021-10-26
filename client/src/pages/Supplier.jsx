@@ -43,8 +43,8 @@ class Supplier extends Component {
   }
 
   handleFormSubmit(values) {
-    const { itemName, color, clarity, cut, caratWeight, price } = values;
-    this.props.addItem(itemName, color, clarity, cut, caratWeight, price, this.state.ipfsImage);
+    const { itemName, color, clarity, cut, caratWeight, priceUsd } = values;
+    this.props.addItem(itemName, color, clarity, cut, caratWeight, priceUsd, this.state.ipfsImage);
     this.formRef.current.resetFields();
     this.setState({ ipfsImage: null, uploading: false });
   }
@@ -86,7 +86,7 @@ class Supplier extends Component {
           <Form.Item label="Weight [ct]" name="caratWeight" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
-          <Form.Item label="Price [USD]" name="price" rules={[{ required: true }]}>
+          <Form.Item label="Price [USD]" name="priceUsd" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>

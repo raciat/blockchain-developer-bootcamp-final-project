@@ -118,11 +118,11 @@ export function getAvailableItems() {
 
       const items = [];
       for await (const item of availableItems) {
-        const { sku, ipfsHash, price, tokenId, supplier } = item;
+        const { sku, ipfsHash, priceWei, tokenId, supplier } = item;
         if (!ipfsHash) { continue; }
         const ipfsData = await getFromIPFS(ipfsHash);
         const itemData = {
-          sku, ipfsHash, price, tokenId, supplierName: supplier.supplierName,
+          sku, ipfsHash, priceWei, tokenId, supplierName: supplier.supplierName,
           ...ipfsData, image: 'https://ipfs.io/ipfs/' + ipfsData.image,
         };
         items.push(itemData);
@@ -154,7 +154,7 @@ export function addSupplier(supplierAddress, supplierName) {
   };
 }
 
-export function addItem(itemName, color, clarity, cut, caratWeight, price, image) {
+export function addItem(itemName, color, clarity, cut, caratWeight, priceUsd, image) {
   return async (dispatch, getState) => {
     const web3 = getState().web3;
     const { accounts, contract } = web3;
@@ -170,7 +170,7 @@ export function addItem(itemName, color, clarity, cut, caratWeight, price, image
 
     try {
       await contract.methods
-        .addItem(ipfsResult.path, price)
+        .addItem(ipfsResult.path, priceUsd)
         .send({ from: accounts[0] });
 
       console.log('Item successfully added');
@@ -182,7 +182,7 @@ export function addItem(itemName, color, clarity, cut, caratWeight, price, image
   };
 }
 
-export function buyItem(sku, price) {
+export function buyItem(sku, priceWei) {
   return async (dispatch, getState) => {
     const web3 = getState().web3;
     const { accounts, contract } = web3;
@@ -190,7 +190,7 @@ export function buyItem(sku, price) {
     try {
       await contract.methods
         .buyItem(sku)
-        .send({ from: accounts[0], value: toWei(price, 'ether') });
+        .send({ from: accounts[0], value: toWei(priceWei, 'wei') });
 
       message.success('Item successfully purchased');
     } catch (e) {

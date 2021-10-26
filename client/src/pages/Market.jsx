@@ -28,8 +28,8 @@ class Market extends Component {
     }
   }
 
-  handleBuy(sku, price) {
-    this.props.buyItem(sku, price);
+  handleBuy(sku, priceWei) {
+    this.props.buyItem(sku, priceWei);
   }
 
   renderItems(availableItems) {
@@ -42,7 +42,7 @@ class Market extends Component {
 
           <p>
             Name: {item.itemName}<br />
-            Price: {item.price} USD<br />
+            Price: {item.priceWei} wei<br />
             Supplier: {item.supplierName}<br />
             Weight: {item.caratWeight} ct<br />
             Cut: {item.cut}<br />
@@ -50,7 +50,7 @@ class Market extends Component {
             Clarity: {item.clarity}<br />
           </p>
 
-          <Button type="primary" icon={<ShoppingCartOutlined />} onClick={() => this.handleBuy(item.sku, item.price)}>
+          <Button type="primary" icon={<ShoppingCartOutlined />} onClick={() => this.handleBuy(item.sku, item.priceWei)}>
             Buy
           </Button>
         </Card>
