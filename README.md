@@ -53,23 +53,24 @@ Minting NFTs in the Ethereum using [ERC-721](https://ethereum.org/en/developers/
 
 ## How to run?
 
-### Deploying the contract to Ropsten via Infura
+### Deploying the contract to Rinkeby via Infura
 - Create new project in [Infura](https://infura.io)
-- Use [Ropsten Faucet](https://faucet.ropsten.be) to get some Ether for default account in Ropsten testnet, to be able to deploy the smart contract
+- Use [Rinkeby Faucet](https://faucet.rinkeby.io/) to get some Ether for default account in Rinkeby testnet, to be able to deploy the smart contract
+  - Hint: use Twitter to publish a post with your Ethereum address, Facebook doesn't work
 - Compile and deploy via Truffle:
-  - Copy endpoint URL for Ropsten testnet and set as `INFURA_URL` environment variable in `.env` file
+  - Copy endpoint URL for Rinkeby testnet and set as `INFURA_URL` environment variable in `.env` file
   - Copy restore phrase from MetaMask and set as `MNEMONIC` environment variable in `.env` file
-  - Execute `truffle migrate --network ropsten` to deploy smart contracts to Ropsten testnet
+  - Execute `truffle migrate --network rinkeby` to deploy smart contracts to Rinkeby testnet
 - Compile and deploy via [Remix](https://remix.ethereum.org/):
   - Copy content of `PreciousStoneToke.sol` and paste into Remix on the first tab called *File Explorer*
   - Compile the code on the second tab called *Solidity Compiler*
-  - Open MetaMask, select Ropsten network and proper account with some test ether there, and click *Connect*
+  - Open MetaMask, select Rinkeby network and proper account with some test ether there, and click *Connect*
   - Open third tab called *Deploy and run transactions*:
     - Choose *Injected Web3* environment
     - Select proper account (make sure it is connected to Remix in MetaMask)
     - Select proper contract (*PreciousStoneToken*)
     - Hit *Deploy*
-- Use [Ropsten Etherscan](https://ropsten.etherscan.io) page to see details of deployed contract using its address
+- Use [Rinkeby Etherscan](https://rinkeby.etherscan.io) page to see details of deployed contract using its address
 
 ### Running on Heroku
 
@@ -77,8 +78,8 @@ Minting NFTs in the Ethereum using [ERC-721](https://ethereum.org/en/developers/
 - Go to *Settings* and add the following *Buildpacks*:
   - `heroku/nodejs`
 - Go to *Settings* and add the following *Config Vars*:
-  - `REACT_APP_CONTRACT_ADDRESS` (use `PreciousStoneToken` smart contract address after it has been deployed to Ropsten or leave empty to deploy the contract)
-  - `INFURA_URL` (use endpoint URL for Ropsten testnet from [Infura](https://infura.io))
+  - `REACT_APP_CONTRACT_ADDRESS` (use `PreciousStoneToken` smart contract address after it has been deployed to Rinkeby or leave empty to deploy the contract)
+  - `INFURA_URL` (use endpoint URL for Rinkeby testnet from [Infura](https://infura.io))
   - `MNEMONIC` (use restore phrase from MetaMask)
 - Go to *Deploy* and connect app to *GitHub* repository
 - Push `master` branch
