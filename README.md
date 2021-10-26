@@ -50,6 +50,8 @@ Minting NFTs in the Ethereum using [ERC-721](https://ethereum.org/en/developers/
 - Execute `CI=true npm test` to run all unit tests for the UI
 - Execute `npm start` to start local development server
 - Open `http://localhost:3000` to see the result, the page will ask to connect to current wallet's account in MetaMask
+- Execute some operations, MetaMask wallet will be opened automatically to sign the transaction
+  - Hint: in case of `the tx doesn't have the correct nonce` error, open MetaMask, go to *My Accounts*, then *Settings*, then *Advanced* and click on *Reset Account*
 
 ## How to run?
 
@@ -70,6 +72,7 @@ Minting NFTs in the Ethereum using [ERC-721](https://ethereum.org/en/developers/
     - Select proper account (make sure it is connected to Remix in MetaMask)
     - Select proper contract (*PreciousStoneToken*)
     - Hit *Deploy*
+- Deployment script will ask for `priceFeedAddress` constructor parameter - use contract address for *ETH/USD* price feed from [the list](https://docs.chain.link/docs/ethereum-addresses/) (e.g. `0x8A753747A1Fa494EC906cE90E9f37563A8AF630e` for Rinkeby)
 - Use [Rinkeby Etherscan](https://rinkeby.etherscan.io) page to see details of deployed contract using its address
 
 ### Running on Heroku

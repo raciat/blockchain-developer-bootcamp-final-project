@@ -93,14 +93,14 @@ contract PreciousStoneToken is ERC721, ERC721Enumerable, ERC721URIStorage, Ownab
     items[sku].buyer.transfer(amountToRefund);
   }
 
-  constructor() ERC721('PreciousStoneToken', 'PST') {
+  constructor(address priceFeedAddress) ERC721('PreciousStoneToken', 'PST') {
     admins[msg.sender] = true;
 
     /**
-     * Network: Rinkeby
      * Aggregator: ETH / USD
+     * List of addresses: https://docs.chain.link/docs/ethereum-addresses/
      */
-    priceFeed = AggregatorV3Interface(0x8A753747A1Fa494EC906cE90E9f37563A8AF630e);
+    priceFeed = AggregatorV3Interface(priceFeedAddress);
   }
 
   function getLatestPrice() public view returns (int, uint8) {
