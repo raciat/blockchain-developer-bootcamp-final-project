@@ -6,6 +6,9 @@ import '@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol';
 import '@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
 import '@openzeppelin/contracts/utils/Counters.sol';
+
+import '@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol';
+
 /// @title Precious Stones Mint via PST - Precious Stone Non-Fungible Tokens
 /// @author Tomasz Racia
 /// @notice It is a market of precious stones based on NFTs
@@ -14,6 +17,8 @@ import '@openzeppelin/contracts/utils/Counters.sol';
 contract PreciousStoneToken is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
   using Counters for Counters.Counter;
   Counters.Counter private _tokenIds;
+
+  AggregatorV3Interface internal priceFeed;
 
   mapping (address => bool) internal admins;
 
@@ -39,7 +44,8 @@ contract PreciousStoneToken is ERC721, ERC721Enumerable, ERC721URIStorage, Ownab
     uint sku;
     Supplier supplier;
     State state;
-    uint price;
+    uint priceUsd; // Price in USD
+    uint priceWei; // Price in wei
     string ipfsHash;
     address payable buyer;
     uint tokenId;
@@ -66,8 +72,16 @@ contract PreciousStoneToken is ERC721, ERC721Enumerable, ERC721URIStorage, Ownab
     _;
   }
 
-  modifier paidEnough(uint price) {
-    require(msg.value >= price, 'Not paid enough');
+  modifier paidEnough(uint priceWei) {
+    require(msg.value >= priceWei, 'Not paid enough');
+    _;
+  }
+
+  // Calculate price in wei based on ETH/USD
+  modifier getWeiPrice(uint sku) {
+    (int ethToUsdPrice, uint8 ethToUsdDecimals) = getLatestPrice();
+    uint priceInWei = _getPriceInWei(ethToUsdPrice, ethToUsdDecimals, items[sku].priceUsd);
+    items[sku].priceWei = priceInWei;
     _;
   }
 
@@ -75,13 +89,25 @@ contract PreciousStoneToken is ERC721, ERC721Enumerable, ERC721URIStorage, Ownab
     // Refund them after pay for item
     _;
 
-    uint price = items[sku].price;
-    uint amountToRefund = msg.value - price;
+    uint amountToRefund = msg.value - items[sku].priceWei;
     items[sku].buyer.transfer(amountToRefund);
   }
 
   constructor() ERC721('PreciousStoneToken', 'PST') {
     admins[msg.sender] = true;
+
+    /**
+     * Network: Rinkeby
+     * Aggregator: ETH / USD
+     */
+    priceFeed = AggregatorV3Interface(0x8A753747A1Fa494EC906cE90E9f37563A8AF630e);
+  }
+
+  function getLatestPrice() public view returns (int, uint8) {
+    (, int price, , ,) = priceFeed.latestRoundData();
+    uint8 decimals = priceFeed.decimals();
+
+    return (price, decimals);
   }
 
   function isAdmin(address adminAddress) public view returns (bool) {
@@ -136,12 +162,13 @@ contract PreciousStoneToken is ERC721, ERC721Enumerable, ERC721URIStorage, Ownab
     return true;
   }
 
-  function addItem(string memory ipfsHash, uint price) public onlySuppliers returns (bool) {
+  function addItem(string memory ipfsHash, uint priceUsd) public onlySuppliers returns (bool) {
     items[skuCount] = Item({
       sku: skuCount,
       supplier: suppliers[msg.sender],
       state: State.ForSale,
-      price: price,
+      priceUsd: priceUsd, // Price in USD
+      priceWei: 0, // Price in wei
       ipfsHash: ipfsHash,
       buyer: payable(address(0)),
       tokenId: 0
@@ -154,20 +181,32 @@ contract PreciousStoneToken is ERC721, ERC721Enumerable, ERC721URIStorage, Ownab
     return true;
   }
 
-  function getAvailableItems() public view returns (Item[] memory){
+  function _getPriceInWei(int ethToUsdPrice, uint8 ethToUsdDecimals, uint usdPrice) internal pure returns (uint) {
+    uint8 precision = 18;
+    uint ethToUsdPricePrec = uint(ethToUsdPrice) * 10 ** (precision  - ethToUsdDecimals);
+    uint usdPricePrec = usdPrice * 10 ** (precision * 2);
+
+    return usdPricePrec / ethToUsdPricePrec;
+  }
+
+  function getAvailableItems() public view returns (Item[] memory) {
     Item[] memory _items = new Item[](skuCount);
+    (int ethToUsdPrice, uint8 ethToUsdDecimals) = getLatestPrice();
 
     for (uint i = 0; i < skuCount; i++) {
       if (items[i].state == State.ForSale && items[i].buyer == payable(address(0)) && items[i].supplier.active == true) {
         _items[i] = items[i];
+
+        // Calculate price in wei based on ETH/USD
+        _items[i].priceWei = _getPriceInWei(ethToUsdPrice, ethToUsdDecimals, items[i].priceUsd);
       }
     }
 
     return _items;
   }
 
-  function buyItem(uint sku) public payable forSale(sku) paidEnough(items[sku].price) checkValue(sku) returns (bool) {
-    items[sku].supplier.supplierAddress.transfer(items[sku].price);
+  function buyItem(uint sku) public payable forSale(sku) getWeiPrice(sku) paidEnough(items[sku].priceWei) checkValue(sku) returns (bool) {
+    items[sku].supplier.supplierAddress.transfer(items[sku].priceWei);
 
     uint tokenId = mintItem(msg.sender, items[sku].ipfsHash);
     items[sku].tokenId = tokenId;

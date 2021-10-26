@@ -55,9 +55,14 @@ contract('PreciousStoneToken', function (accounts) {
         assert(isDefined(itemStruct)('state'), 'Item Struct should have a `state` field');
       });
 
-      it('should have a `price`', () => {
-        assert(isDefined(itemStruct)('price'), 'Item Struct should have a `price` field');
-        assert(isType(itemStruct)('price')('uint'), '`price` should be of type `uint`');
+      it('should have a `priceUsd`', () => {
+        assert(isDefined(itemStruct)('priceUsd'), 'Item Struct should have a `priceUsd` field');
+        assert(isType(itemStruct)('priceUsd')('uint'), '`priceUsd` should be of type `uint`');
+      });
+
+      it('should have a `priceWei`', () => {
+        assert(isDefined(itemStruct)('priceWei'), 'Item Struct should have a `priceWei` field');
+        assert(isType(itemStruct)('priceWei')('uint'), '`priceWei` should be of type `uint`');
       });
 
       it('should have a `ipfsHash`', () => {
@@ -154,7 +159,7 @@ contract('PreciousStoneToken', function (accounts) {
     it('should add a new item', async function () {
       await instance.addSupplier(account3, 'Supplier 1', { from: contractOwner });
       
-      const result = await instance.addItem('QmWd2umLNGQpNYBrPVX8qR4r9YFeAQgLNs27Vxw8L5KP6A', 10000, { from: account3 });
+      const result = await instance.addItem('QmefEpzFfm3xGKzPn9zsnW8Mkgp7rbvPqvoXw3NFEBPU9f', 10000, { from: account3 });
       const logSku = result.logs[0].args.sku;
 
       assert.equal(0, logSku, 'LogItemForSale event with `skuCount` property not emitted');

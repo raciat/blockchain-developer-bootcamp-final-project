@@ -7,6 +7,7 @@
     "url": "https://github.com/raciat/blockchain-developer-bootcamp-final-project"
   },
   "dependencies": {
+    "@chainlink/contracts": "^0.2.2",
     "@openzeppelin/contracts": "^4.3.2",
     "@truffle/hdwallet-provider": "^1.5.1",
     "dotenv": "^10.0.0"
