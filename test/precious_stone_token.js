@@ -1,3 +1,4 @@
+const AggregatorV3Mock = artifacts.require('AggregatorV3Mock');
 const PreciousStoneToken = artifacts.require('PreciousStoneToken');
 
 const { items: ItemStruct, isDefined, isType } = require('./ast-helper');
@@ -7,12 +8,14 @@ const { items: ItemStruct, isDefined, isType } = require('./ast-helper');
  * Ethereum client
  * See docs: https://www.trufflesuite.com/docs/truffle/testing/writing-tests-in-javascript
  */
-contract('PreciousStoneToken', function (accounts) {
+contract('PreciousStoneToken', async function(accounts) {
   const [contractOwner, additionalAdmin, account3, account4] = accounts;
   let instance;
 
   beforeEach(async () => {
-    instance = await PreciousStoneToken.new();
+    const aggregatorV3Mock = await AggregatorV3Mock.new();
+    const priceFeedMockAddress = aggregatorV3Mock.address;
+    instance = await PreciousStoneToken.new(priceFeedMockAddress);
   });
 
   describe('Enums', () => {
@@ -88,28 +91,28 @@ contract('PreciousStoneToken', function (accounts) {
       assert.equal(result.valueOf(), true, 'The contract has no admin');
     });
 
-    it('should confirm account is an admin', async function () {
+    it('should confirm account is an admin', async function() {
       await instance.addAdmin(additionalAdmin);
       const result = await instance.isAdmin(additionalAdmin);
 
       assert.equal(result.valueOf(), true, 'Incorrect admin returned');
     });
 
-    it('should confirm account is not an admin', async function () {
+    it('should confirm account is not an admin', async function() {
       await instance.removeAdmin(additionalAdmin);
       const result = await instance.isAdmin(additionalAdmin);
 
       assert.equal(result.valueOf(), false, 'Incorrect admin returned');
     });
     
-    it('should add additional admin', async function () {
+    it('should add additional admin', async function() {
       const result = await instance.addAdmin(additionalAdmin);
       const logAdditionalAdminAddress = result.logs[0].args.additionalAdminAddress;
 
       assert.equal(additionalAdmin, logAdditionalAdminAddress, 'LogAdminAdded event with `additionalAdminAddress` property not emitted');
     });
     
-    it('should remove an admin', async function () {
+    it('should remove an admin', async function() {
       const result = await instance.removeAdmin(additionalAdmin);
       const logAdminAddress = result.logs[0].args.adminAddress;
 
@@ -118,14 +121,14 @@ contract('PreciousStoneToken', function (accounts) {
   });
 
   describe('Suppliers', () => {
-    it('should confirm account is a supplier', async function () {
+    it('should confirm account is a supplier', async function() {
       await instance.addSupplier(account3, 'Supplier 1');
       const result = await instance.isSupplier(account3);
 
       assert.equal(result.valueOf(), true, 'Incorrect supplier returned');
     });
     
-    it('should confirm account is not a supplier', async function () {
+    it('should confirm account is not a supplier', async function() {
       await instance.addSupplier(account3, 'Supplier 1');
       await instance.deactivateSupplier(account3);
       const result = await instance.isSupplier(account3);
@@ -133,21 +136,21 @@ contract('PreciousStoneToken', function (accounts) {
       assert.equal(result.valueOf(), false, 'Incorrect supplier returned');
     });
     
-    it('should add a new supplier', async function () {
+    it('should add a new supplier', async function() {
       const result = await instance.addSupplier(account3, 'Supplier 1');
       const logSupplierAddress = result.logs[0].args.supplierAddress;
 
       assert.equal(account3, logSupplierAddress, 'LogNewSupplier event with `supplierAddress` property not emitted');
     });
     
-    it('should deactivate a supplier', async function () {
+    it('should deactivate a supplier', async function() {
       const result = await instance.deactivateSupplier(account3);
       const logSupplierAddress = result.logs[0].args.supplierAddress;
 
       assert.equal(account3, logSupplierAddress, 'LogSupplierDeactivated event with `supplierAddress` property not emitted');
     });
     
-    it('should activate a supplier', async function () {
+    it('should activate a supplier', async function() {
       const result = await instance.activateSupplier(account3);
       const logSupplierAddress = result.logs[0].args.supplierAddress;
 
@@ -156,7 +159,7 @@ contract('PreciousStoneToken', function (accounts) {
   });
 
   describe('Items', () => {
-    it('should add a new item', async function () {
+    it('should add a new item', async function() {
       await instance.addSupplier(account3, 'Supplier 1', { from: contractOwner });
       
       const result = await instance.addItem('QmefEpzFfm3xGKzPn9zsnW8Mkgp7rbvPqvoXw3NFEBPU9f', 10000, { from: account3 });
@@ -165,7 +168,7 @@ contract('PreciousStoneToken', function (accounts) {
       assert.equal(0, logSku, 'LogItemForSale event with `skuCount` property not emitted');
     });
 
-    it('should set an item as sold', async function () {
+    it('should set an item as sold', async function() {
       const skuCount = 0;
       const result = await instance.buyItem(skuCount, { from: account4 });
       const mintTo = result.logs[0].args.to;
@@ -179,7 +182,7 @@ contract('PreciousStoneToken', function (accounts) {
   });
 
   describe('Deployment', () => {
-    it('should assert true', async function () {
+    it('should assert true', async function() {
       await PreciousStoneToken.deployed();
       return assert.isTrue(true);
     });
