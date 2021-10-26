@@ -118,11 +118,11 @@ export function getAvailableItems() {
 
       const items = [];
       for await (const item of availableItems) {
-        const { sku, ipfsHash, priceWei, tokenId, supplier } = item;
+        const { sku, ipfsHash, priceUsd, priceWei, tokenId, supplier } = item;
         if (!ipfsHash) { continue; }
         const ipfsData = await getFromIPFS(ipfsHash);
         const itemData = {
-          sku, ipfsHash, priceWei, tokenId, supplierName: supplier.supplierName,
+          sku, ipfsHash, priceUsd, priceWei, tokenId, supplierName: supplier.supplierName,
           ...ipfsData, image: 'https://ipfs.io/ipfs/' + ipfsData.image,
         };
         items.push(itemData);

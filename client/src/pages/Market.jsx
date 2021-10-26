@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Card, Button, Image, Col, Row } from 'antd';
 import { ShoppingCartOutlined } from '@ant-design/icons';
+import { fromWei } from 'web3-utils';
 import * as web3Actions from '../actions/web3';
 
 class Market extends Component {
@@ -42,7 +43,7 @@ class Market extends Component {
 
           <p>
             Name: {item.itemName}<br />
-            Price: {item.priceWei} wei<br />
+            Price: {item.priceUsd} USD ({Number(fromWei(item.priceWei, 'ether')).toFixed(4)} ETH)<br />
             Supplier: {item.supplierName}<br />
             Weight: {item.caratWeight} ct<br />
             Cut: {item.cut}<br />
