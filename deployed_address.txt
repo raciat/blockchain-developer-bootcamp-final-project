@@ -1,2 +1,2 @@
-Ropsten
-TBD
+Testnet: Rinkeby
+Contract address: 0xf06Cc39d3427b3fF22f58dbBe265f34ebc15A009
