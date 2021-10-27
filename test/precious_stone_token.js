@@ -84,6 +84,15 @@ contract('PreciousStoneToken', async function(accounts) {
     });
   });
 
+  describe('Price Feed', () => {
+    it('should provide latest price', async () => {
+      const result = await instance.getLatestPrice();
+
+      assert.equal(result[0], 406772749646, 'Price feed does not return latest price');
+      assert.equal(result[1], 8, 'Price feed does not return precision of the latest price');
+    });
+  });
+
   describe('Admins', () => {
     it('should have an admin', async () => {
       const result = await instance.isAdmin(contractOwner);
