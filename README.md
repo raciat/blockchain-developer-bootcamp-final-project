@@ -4,7 +4,7 @@ Digital form of gemstones to store characteristics, track origin and history of 
 
 ## Problem
 
-Currently, there is lack of transparency when it comes to precious stones. Origin is often unknown and there is no full history of ownership. Moreover, the characteristic of an asset could be stored so that once verified becomes its integral part, hence doesn't allow to tamper.
+Currently, there is lack of transparency when it comes to precious stones. Origin is often unknown and there is no full history of ownership. Moreover, the characteristic of an asset could be stored so that once verified becomes its integral part, hence doesn't allow tampering.
 
 ## Idea
 
