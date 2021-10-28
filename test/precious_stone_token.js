@@ -255,6 +255,51 @@ contract('PreciousStoneToken', async function(accounts) {
     });
   });
 
+  describe('Tokens', () => {
+    it('should return empty balance', async function() {
+      const balanceAccount3 = await instance.balanceOf(account3);
+      assert.equal(balanceAccount3, 0, 'Incorrect balance of tokens');
+
+      const balanceAccount4 = await instance.balanceOf(account4);
+      assert.equal(balanceAccount4, 0, 'Incorrect balance of tokens');
+    });
+
+    it('should mint a new token for proper owner', async function() {
+      await instance.addSupplier(account3, supplierName, { from: contractOwner });
+      await instance.addItem(itemsFixture[0].ipfsHash, itemsFixture[0].priceUsd, { from: account3 });
+      await instance.buyItem(0, { from: account4, value: itemsFixture[0].priceWei });
+
+      const balanceResult = await await instance.balanceOf(account4);
+      assert.equal(balanceResult, 1, 'Incorrect balance of tokens');
+
+      const tokenId = await instance.tokenOfOwnerByIndex(account4, 0);
+      const tokenURI = await instance.tokenURI(tokenId);
+      const ipfsHash = tokenURI.replace('https://ipfs.io/ipfs/', '');
+      assert.equal(ipfsHash, itemsFixture[0].ipfsHash, 'Incorrect IPFS hash of the token');
+    });
+
+    it('should transfer a token to other owner', async function() {
+      await instance.addSupplier(account3, supplierName, { from: contractOwner });
+      await instance.addItem(itemsFixture[0].ipfsHash, itemsFixture[0].priceUsd, { from: account3 });
+      await instance.buyItem(0, { from: account4, value: itemsFixture[0].priceWei });
+
+      const balanceAccount3 = await instance.balanceOf(account3);
+      assert.equal(balanceAccount3, 0, 'Incorrect balance of tokens before transfer');
+
+      const balanceAccount4 = await instance.balanceOf(account4);
+      assert.equal(balanceAccount4, 1, 'Incorrect balance of tokens before transfer');
+
+      const tokenId = await instance.tokenOfOwnerByIndex(account4, 0);
+      await instance.transferFrom(account4, account3, tokenId, { from: account4 });
+
+      const newBalanceAccount3 = await instance.balanceOf(account3);
+      assert.equal(newBalanceAccount3, 1, 'Incorrect balance of tokens after transfer');
+
+      const newBalanceAccount4 = await instance.balanceOf(account4);
+      assert.equal(newBalanceAccount4, 0, 'Incorrect balance of tokens after transfer');
+    });
+  });
+
   describe('Deployment', () => {
     it('should assert true', async function() {
       await PreciousStoneToken.deployed();
