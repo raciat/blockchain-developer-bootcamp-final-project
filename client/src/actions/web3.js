@@ -154,7 +154,7 @@ export function addSupplier(supplierAddress, supplierName) {
   };
 }
 
-export function addItem(itemName, color, clarity, cut, caratWeight, priceUsd, image) {
+export function addItem(history, itemName, color, clarity, cut, caratWeight, priceUsd, image) {
   return async (dispatch, getState) => {
     const web3 = getState().web3;
     const { accounts, contract } = web3;
@@ -173,6 +173,7 @@ export function addItem(itemName, color, clarity, cut, caratWeight, priceUsd, im
         .addItem(ipfsResult.path, priceUsd)
         .send({ from: accounts[0] });
 
+      await history.push('/market');
       console.log('Item successfully added');
       message.success('Item successfully added');
     } catch (e) {
@@ -182,7 +183,7 @@ export function addItem(itemName, color, clarity, cut, caratWeight, priceUsd, im
   };
 }
 
-export function buyItem(sku, priceWei) {
+export function buyItem(history, sku, priceWei) {
   return async (dispatch, getState) => {
     const web3 = getState().web3;
     const { accounts, contract } = web3;
@@ -192,6 +193,7 @@ export function buyItem(sku, priceWei) {
         .buyItem(sku)
         .send({ from: accounts[0], value: toWei(priceWei, 'wei') });
 
+      await history.push('/my-tokens');
       message.success('Item successfully purchased');
     } catch (e) {
       console.error('An error occurred in buyItem()', e);

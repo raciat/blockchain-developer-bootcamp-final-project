@@ -18,7 +18,7 @@ class MyTokens extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if ((!prevProps.web3 && this.props.web3) || (!prevProps.myBalance && this.props.myBalance)) {
+    if ((!prevProps.web3 && this.props.web3) || (prevProps.myBalance !== this.props.myBalance)) {
       this.fetchData();
     }
   }

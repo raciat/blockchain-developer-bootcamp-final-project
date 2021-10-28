@@ -5,12 +5,14 @@ import { bindActionCreators } from 'redux';
 import { Card, Button, Image, Col, Row } from 'antd';
 import { ShoppingCartOutlined } from '@ant-design/icons';
 import { fromWei } from 'web3-utils';
+import { withRouter } from 'react-router-dom';
 import * as web3Actions from '../actions/web3';
 
 class Market extends Component {
   constructor(props) {
     super(props);
-    this.handleBuy = this.handleBuy.bind(this);
+    const { history } = props;
+    this.handleBuy = this.handleBuy.bind(this, history);
   }
 
   componentDidMount() {
@@ -29,8 +31,9 @@ class Market extends Component {
     }
   }
 
-  handleBuy(sku, priceWei) {
-    this.props.buyItem(sku, priceWei);
+  async handleBuy(history, sku, priceWei) {
+    await this.props.buyItem(history, sku, priceWei);
+    this.props.getMyBalance();
   }
 
   renderItems(availableItems) {
@@ -78,16 +81,18 @@ class Market extends Component {
 }
 
 Market.propTypes = {
+  history: PropTypes.object,
   web3: PropTypes.object,
   availableItems: PropTypes.array,
   getAvailableItems: PropTypes.func,
   buyItem: PropTypes.func,
+  getMyBalance: PropTypes.func,
 };
 
-export default connect(
+export default withRouter(connect(
   (state) => ({ 
     web3: state.web3.web3, 
     availableItems: state.web3.availableItems,
   }),
   (dispatch) => bindActionCreators(web3Actions, dispatch),
-)(Market);
+)(Market));

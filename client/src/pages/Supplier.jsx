@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Form, Input, Button, Select } from 'antd';
+import { withRouter } from 'react-router-dom';
 import * as web3Actions from '../actions/web3';
 import { COLOR, CLARITY } from '../utils/static';
 import { ipfsClient } from '../utils/ipfsClient';
@@ -14,10 +15,11 @@ class Supplier extends Component {
 
   constructor(props) {
     super(props);
+    const { history } = props;
     this.state = { ipfsImage: null };
 
-    this.uploadImageIPFS = this.uploadImageIPFS.bind(this)
-    this.handleFormSubmit = this.handleFormSubmit.bind(this)
+    this.uploadImageIPFS = this.uploadImageIPFS.bind(this);
+    this.handleFormSubmit = this.handleFormSubmit.bind(this, history);
   }
 
   componentWillUnmount() {
@@ -42,9 +44,9 @@ class Supplier extends Component {
     }
   }
 
-  handleFormSubmit(values) {
+  handleFormSubmit(history, values) {
     const { itemName, color, clarity, cut, caratWeight, priceUsd } = values;
-    this.props.addItem(itemName, color, clarity, cut, caratWeight, priceUsd, this.state.ipfsImage);
+    this.props.addItem(history, itemName, color, clarity, cut, caratWeight, priceUsd, this.state.ipfsImage);
     this.formRef.current.resetFields();
     this.setState({ ipfsImage: null, uploading: false });
   }
@@ -101,13 +103,14 @@ class Supplier extends Component {
 }
 
 Supplier.propTypes = {
+  history: PropTypes.object,
   isSupplier: PropTypes.bool,
   addItem: PropTypes.func,
 };
 
-export default connect(
+export default withRouter(connect(
   (state) => ({ 
     isSupplier: state.web3.isSupplier,
   }),
   (dispatch) => bindActionCreators(web3Actions, dispatch),
-)(Supplier);
+)(Supplier));
