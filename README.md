@@ -20,7 +20,6 @@ Minting NFTs in the Ethereum using [ERC-721](https://ethereum.org/en/developers/
 
 ```bash
 .
-├── Procfile                                # File used on Heroku that describes which command to run
 ├── client                                  # UI of distributed app - dApp
 │   ├── build                                   # Built result that can be served as dApp
 │   ├── node_modules                            # Dependencies for running, development and testing of dApp
@@ -40,6 +39,7 @@ Minting NFTs in the Ethereum using [ERC-721](https://ethereum.org/en/developers/
 ├── test                                    # Tests for smart contracts
 │   ├── fixtures                                # Mocked data for tests
 │   └── precious_stone_token.js                 # Unit tests for Precious Stone Token smart contract
+├── Procfile                                # File used on Heroku that describes which command to run
 └── truffle-config.js                       # Truffle configuration
 ```
 
