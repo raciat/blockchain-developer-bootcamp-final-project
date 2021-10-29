@@ -16,6 +16,12 @@ Minting NFTs in the Ethereum using [ERC-721](https://ethereum.org/en/developers/
 - **Dealers** would be able to verify its origin
 - **Clients** would be able to verify its origin, history, get familiar with its characteristics and purchase
 
+## Hosting
+
+Distributed application (dApp) is hosted on Heroku and available to use on https://precious-stones-mint.herokuapp.com/.
+Be advised that free dyno on Heroku requires sleeping time, so the first opening of the page may take a bit longer.
+Because the smart contract is using pricing feed, it was deployed to Rinkeby testnet.
+
 ## Project structure
 
 ```bash
