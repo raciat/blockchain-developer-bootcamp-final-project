@@ -28,24 +28,24 @@ Because the smart contract is using pricing feed, it was deployed to Rinkeby tes
 .
 ├── client                                  # UI of distributed app - dApp
 │   ├── build                                   # Built result that can be served as dApp
-│   ├── node_modules                            # Dependencies for running, development and testing of dApp
+│   ├── node_modules                            # Dependencies of dApp
 │   ├── package-lock.json                       # Locked versions of dependencies for dApp
 │   ├── package.json                            # List of dependencies and commands for dApp
 │   ├── public                                  # Public static assets for dApp
 │   └── src                                     # Source code for dApp
 ├── contracts                               # Sorce code for smart contracts
-│   ├── AggregatorV3Mock.sol                    # Smart contract to mock price feed for development and testing
-│   └── PreciousStoneToken.sol                  # Sorce code of Precious Stoke Token smart contracts
+│   ├── AggregatorV3Mock.sol                    # Smart contract to mock price feed
+│   └── PreciousStoneToken.sol                  # Sorce code of Precious Stoke Token
 ├── examples                                # Sample images to use for testing
 ├── migrations                              # Migrations to deploy smart contracts using Truffle
-│   └── 2_deploy_contracts.js                   # Instructions for deployment of written smart contracts
-├── node_modules                            # Dependencies for running, local development and testing
+│   └── 2_deploy_contracts.js                   # Instructions for deployment of smart contracts
+├── node_modules                            # Dependencies
 ├── package-lock.json                       # Locked versions of dependencies
 ├── package.json                            # List of dependencies and commands
 ├── test                                    # Tests for smart contracts
 │   ├── fixtures                                # Mocked data for tests
-│   └── precious_stone_token.js                 # Unit tests for Precious Stone Token smart contract
-├── Procfile                                # File used on Heroku that describes which command to run
+│   └── precious_stone_token.js                 # Unit tests for Precious Stone Token
+├── Procfile                                # File used on Heroku to define what to run
 └── truffle-config.js                       # Truffle configuration
 ```
 
