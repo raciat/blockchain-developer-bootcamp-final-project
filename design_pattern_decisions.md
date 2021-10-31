@@ -13,7 +13,7 @@ This way it is possible to use IPFS hash as a token ID.
 - [Ownable](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol) abstract contract that adds basis access control mechanism.
 It is used as a security mechanism and also for transferring owned tokens to other Ethereum address.
 
-## Oracles
+### Oracles
 
 *PreciousStoneToken* is using off-chain oracles via [Chainlink](https://chain.link). 
 It is fetching the price of Ethereum compared to USD to calculate the result price. 
@@ -22,7 +22,7 @@ Using [AggregatorV3Interface](https://github.com/smartcontractkit/chainlink/blob
 This way, the network is using different data providers and oracles so that there is never a single authority point.
 Visualization of this contract and other nodes gathering the data can be found at [data.chain.link](https://data.chain.link/ethereum/mainnet/crypto-usd/eth-usd).
 
-## Access Control Design Patterns
+### Access Control Design Patterns
 
 Besides securing NFTs using [Ownable](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol) abstract contract, *PreciousStoneToken* ensures restricted access by implementing two roles for supply chain: admins and suppliers. 
 Only admins can add suppliers, and only suppliers can add new items to the market.
