@@ -1,5 +1,12 @@
 # 💎 Precious Stones Mint
 
+[![node.js version](https://img.shields.io/badge/node.js->=%2012.10.0-brightgreen.svg)](https://nodejs.org/en/download/)
+[![built-with truffle](https://img.shields.io/badge/built%20with-Truffle-3677FF)](https://www.trufflesuite.com/)
+[![built-with openzeppelin](https://img.shields.io/badge/built%20with-OpenZeppelin-3677FF)](https://docs.openzeppelin.com/)
+[![hosting heroku](https://img.shields.io/badge/hosting-Heroku-9E7CC1)](https://www.heroku.com/)
+[![blockchain ethereum](https://img.shields.io/badge/blockchain-Ethereum-62688F)](https://ethereum.org/)
+[![wallet metamask](https://img.shields.io/badge/wallet-MetaMask-F5841E)](https://metamask.io/)
+
 Digital form of gemstones to store characteristics, track origin and history of ownership, and ensure legit source that is ethical.
 
 ## Problem
