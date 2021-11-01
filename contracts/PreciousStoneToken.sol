@@ -81,6 +81,8 @@ contract PreciousStoneToken is ERC721, ERC721Enumerable, ERC721URIStorage, Ownab
     (int ethToUsdPrice, uint8 ethToUsdDecimals) = getLatestPrice();
     uint priceInWei = _getPriceInWei(ethToUsdPrice, ethToUsdDecimals, items[sku].priceUsd);
     items[sku].priceWei = priceInWei;
+
+    require(items[sku].priceWei > 0, 'No available price in wei');
     _;
   }
 
