@@ -62,7 +62,7 @@ Because the smart contract is using pricing feed, it was deployed to Rinkeby tes
 
 - Execute `npm install -g truffle` to install Truffle globally to be able to execute it from the command line
 - Execute `npm install -g ganache-cli` to install Ganache CLI globally to be able to execute it from the command line
-- Execute `npm install` from the project root to install all other dependencies
+- Execute `npm ci` from the project root to install all other dependencies
 - Execute `npm run dotenv` to prepare local `.env` file
 
 ### Contract Development
@@ -73,16 +73,16 @@ Because the smart contract is using pricing feed, it was deployed to Rinkeby tes
 - Execute `truffle migrate --network develop` to deploy smart contracts to local network
   - Alternative to execute `truffle migrate --network development` if using `ganache-cli`
 - Execute `truffle test` to run unit tests for smart contracts
+- Execute `.exit` to stop running Truffle Develop
 
-### MetaMask wallet for Development
+### MetaMask wallet for UI Development
 
 - Install [MetaMask browser extension](https://metamask.io/download.html) and open it
 - Create a new network:
   - Name: `Truffle Develop`
   - RPC URL: `http://127.0.0.1:9545/`
   - Chain ID: `1337`
-- Import some accounts from Truffle using their private keys
-- Alternative to use mnemonic as restore phrase, which is provided if using `ganache-cli`
+- Import some accounts using their private keys or mnemonic (both provided as a result of `truffle develop` or `ganache-cli` command)
 
 ### UI Development
 
