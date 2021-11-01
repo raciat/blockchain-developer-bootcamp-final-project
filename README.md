@@ -102,12 +102,12 @@ Because the smart contract is using pricing feed, it was deployed to Rinkeby tes
 
 ## How to run?
 
-### Deploying the contract to Rinkeby via Infura
-- Create new project in [Infura](https://infura.io)
+### Deploying the contract to Rinkeby testnet
 - Use [Rinkeby Faucet](https://faucet.rinkeby.io/) to get some ETH for an account in Rinkeby testnet
   - Hint: use Twitter to publish a post with your Ethereum address, Facebook doesn't work
 - Open MetaMask, select Rinkeby testnet and choose the account with some ETH there, to be able to deploy the smart contract
 - Compile and deploy via Truffle:
+  - Create new project in [Infura](https://infura.io) 
   - Copy endpoint URL for Rinkeby testnet and set as `INFURA_URL` environment variable in `.env` file
   - Copy restore phrase from MetaMask and set as `MNEMONIC` environment variable in `.env` file
   - Execute `truffle migrate --network rinkeby` to deploy smart contracts to Rinkeby testnet
