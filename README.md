@@ -139,3 +139,9 @@ Because the smart contract is using pricing feed, it was deployed to Rinkeby tes
 - Go to *Deploy* and connect app to *GitHub* repository
 - Push `master` branch
 - Go to *Deploy*, choose `master` branch and then hit *Deploy Branch* button (or enable automatic deployments)
+
+## Preview of the dApp
+
+![dApp screenshot](./docs/img/dapp-screenshot.jpg)
+
+A screencast of walking through the project is available [here](https://vimeo.com/raciat).
