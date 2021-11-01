@@ -11,3 +11,8 @@ Therefore, both version of compiler in [Truffle configuration](./truffle-config.
 
 [SWC-115](https://swcregistry.io/docs/SWC-115) Using `tx.origin` variable for authorization could make a contract vulnerable if an authorized account calls into a malicious contract.
 Therefore, `tx.origin` is not being used for authorization, `msg.sender` is being used instead.
+
+### Function Default Visibility
+
+[SWC-100](https://swcregistry.io/docs/SWC-100) Functions that do not have a function visibility type specified are `public` by default.
+To avoid this, all written functions have accessibility modifier specified, in this case to be: `public`, `internal` or `private`.

@@ -17,9 +17,9 @@ contract PreciousStoneToken is ERC721, ERC721Enumerable, ERC721URIStorage, Ownab
   using Counters for Counters.Counter;
   Counters.Counter private _tokenIds;
 
-  AggregatorV3Interface internal priceFeed;
+  AggregatorV3Interface private priceFeed;
 
-  mapping (address => bool) internal admins;
+  mapping (address => bool) private admins;
 
   modifier onlyAdmins {
     require(admins[msg.sender] == true, 'Not an admin');
@@ -37,7 +37,7 @@ contract PreciousStoneToken is ERC721, ERC721Enumerable, ERC721URIStorage, Ownab
 
   enum State { ForSale, Sold }
 
-  uint internal skuCount;
+  uint private skuCount;
 
   struct Item {
     uint sku;
@@ -50,8 +50,8 @@ contract PreciousStoneToken is ERC721, ERC721Enumerable, ERC721URIStorage, Ownab
     uint tokenId;
   }
 
-  mapping (address => Supplier) internal suppliers;
-  mapping (uint => Item) internal items;
+  mapping (address => Supplier) private suppliers;
+  mapping (uint => Item) private items;
 
   event LogNewSupplier(address supplierAddress);
   event LogSupplierDeactivated(address supplierAddress);
@@ -218,7 +218,7 @@ contract PreciousStoneToken is ERC721, ERC721Enumerable, ERC721URIStorage, Ownab
   /// @param ethToUsdDecimals Number of decimals used for precision of USD/ETH from price feed
   /// @param usdPrice Price in USD of the item
   /// @return Price in wei
-  function _getPriceInWei(int ethToUsdPrice, uint8 ethToUsdDecimals, uint usdPrice) internal pure returns (uint) {
+  function _getPriceInWei(int ethToUsdPrice, uint8 ethToUsdDecimals, uint usdPrice) private pure returns (uint) {
     uint8 precision = 18;
     uint ethToUsdPricePrec = uint(ethToUsdPrice) * 10 ** (precision  - ethToUsdDecimals);
     uint usdPricePrec = usdPrice * 10 ** (precision * 2);
@@ -291,7 +291,7 @@ contract PreciousStoneToken is ERC721, ERC721Enumerable, ERC721URIStorage, Ownab
   /// @param to Ethereum address of token owner
   /// @param _tokenURI URI of the token to IPFS where metadata is stored
   /// @return ID of created token
-  function mintItem(address to, string memory _tokenURI) internal returns (uint) {
+  function mintItem(address to, string memory _tokenURI) private returns (uint) {
     _tokenIds.increment();
     uint256 id = _tokenIds.current();
 
