@@ -97,7 +97,6 @@ contract PreciousStoneToken is ERC721, ERC721Enumerable, ERC721URIStorage, Ownab
   /// @notice Constructor to create PST - PreciousStoneToken
   /// @dev Use proper address of smart contract from https://docs.chain.link/docs/ethereum-addresses/
   /// @param priceFeedAddress Address of smart contract used as price feed for ETH/USD
-  /// @return ERC721 Non-Fungible Token Contract
   constructor(address priceFeedAddress) ERC721('PreciousStoneToken', 'PST') {
     admins[msg.sender] = true;
 
