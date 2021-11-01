@@ -104,21 +104,23 @@ Because the smart contract is using pricing feed, it was deployed to Rinkeby tes
 
 ### Deploying the contract to Rinkeby via Infura
 - Create new project in [Infura](https://infura.io)
-- Use [Rinkeby Faucet](https://faucet.rinkeby.io/) to get some Ether for default account in Rinkeby testnet, to be able to deploy the smart contract
+- Use [Rinkeby Faucet](https://faucet.rinkeby.io/) to get some ETH for an account in Rinkeby testnet
   - Hint: use Twitter to publish a post with your Ethereum address, Facebook doesn't work
+- Open MetaMask, select Rinkeby testnet and choose the account with some ETH there, to be able to deploy the smart contract
 - Compile and deploy via Truffle:
   - Copy endpoint URL for Rinkeby testnet and set as `INFURA_URL` environment variable in `.env` file
   - Copy restore phrase from MetaMask and set as `MNEMONIC` environment variable in `.env` file
   - Execute `truffle migrate --network rinkeby` to deploy smart contracts to Rinkeby testnet
 - Compile and deploy via [Remix](https://remix.ethereum.org/):
   - Copy content of `PreciousStoneToke.sol` and paste into Remix on the first tab called *File Explorer*
-  - Compile the code on the second tab called *Solidity Compiler*
+  - Compile the code on the second tab called *Solidity Compiler* using the same version as mentioned in pragma
   - Open MetaMask, select Rinkeby network and proper account with some test ether there, and click *Connect*
   - Open third tab called *Deploy and run transactions*:
     - Choose *Injected Web3* environment
     - Select proper account (make sure it is connected to Remix in MetaMask)
     - Select proper contract (*PreciousStoneToken*)
     - Hit *Deploy*
+  - Accept the transaction in MetaMask extension
 - Deployment script will ask for `priceFeedAddress` constructor parameter - use contract address for *ETH/USD* price feed from [the list](https://docs.chain.link/docs/ethereum-addresses/) (e.g. `0x8A753747A1Fa494EC906cE90E9f37563A8AF630e` for Rinkeby)
 - Use [Rinkeby Etherscan](https://rinkeby.etherscan.io) page to see details of deployed contract using its address
 
