@@ -64,10 +64,11 @@ Because the smart contract is using pricing feed, it was deployed to Rinkeby tes
 - Execute `npm install -g ganache-cli` to install Ganache CLI globally to be able to execute it from the command line
 - Execute `npm ci` from the project root to install all other dependencies
 - Execute `npm run dotenv` to prepare local `.env` file
+- Execute `cd client && npm ci` to install all dependencies for the UI
 
 ### Contract Development
 
-- Execute `truffle develop`
+- Execute `truffle develop` to launch Truffle Develop
   - Alternative to execute `ganache-cli` in a separate tab
 - Execute `truffle compile` to compile all smart contracts
 - Execute `truffle migrate --network develop` to deploy smart contracts to local network
@@ -86,12 +87,18 @@ Because the smart contract is using pricing feed, it was deployed to Rinkeby tes
 
 ### UI Development
 
+- Execute `truffle develop` in a separate CLI to launch Truffle Develop
 - Execute `cd client` to change path to main client directory
-- Execute `CI=true npm test` to run all unit tests for the UI
 - Execute `npm start` to start local development server
-- Open `http://localhost:3000` to see the result, the page will ask to connect to current wallet's account in MetaMask
-- Execute some operations, MetaMask wallet will be opened automatically to sign the transaction
+- Open `http://localhost:3000` to see the result
+- The page will ask to connect the currently selected account in the MetaMask wallet to the dApp
+  - MetaMask setup is required and documented above 
+  - Make sure to select *Truffle Develop* network and one of the imported accounts, and click *Connect* - you will only be asked once per an account
+- Every change of account or network in MetaMask will automatically reload the page for convenience
+- Execute some operations, MetaMask wallet will be opened automatically to sign each transaction
+  - Use `examples` directory from project root for sample images of precious stones items
   - Hint: in case of `the tx doesn't have the correct nonce` error, open MetaMask, go to *My Accounts*, then *Settings*, then *Advanced* and click on *Reset Account*
+- Execute `CI=true npm test` to run all unit tests for the UI
 
 ## How to run?
 
@@ -120,9 +127,13 @@ Because the smart contract is using pricing feed, it was deployed to Rinkeby tes
 - Create a new app in Heroku (`heroku-20` type of stack)
 - Go to *Settings* and add the following *Buildpacks*:
   - `heroku/nodejs`
-- Go to *Settings* and add the following *Config Vars*:
+- Go to *Settings* and add the following mandatory *Config Vars*:
   - `REACT_APP_CONTRACT_ADDRESS` (use `PreciousStoneToken` smart contract address after it has been deployed to Rinkeby or leave empty to deploy the contract)
+  - `REACT_APP_IPFS_PROJECT_ID` (IPFS project ID provided by [Infura](https://infura.io))
+  - `REACT_APP_IPFS_PROJECT_SECRET` (IPFS project secret provided by [Infura](https://infura.io))
+- Go to *Settings* and add the following optional *Config Vars* if smart contract should be deployed:
   - `INFURA_URL` (use endpoint URL for Rinkeby testnet from [Infura](https://infura.io))
   - `MNEMONIC` (use restore phrase from MetaMask)
 - Go to *Deploy* and connect app to *GitHub* repository
 - Push `master` branch
+- Go to *Deploy*, choose `master` branch and then hit *Deploy Branch* button (or enable automatic deployments)
