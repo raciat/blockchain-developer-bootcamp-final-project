@@ -2,7 +2,7 @@ import { Buffer } from 'buffer';
 import { create } from 'ipfs-http-client';
 import { BufferList } from 'bl';
 
-const IPFS_PROJECT_ID = process.env.REACT_APP_IPFS_PROJECT_IT;
+const IPFS_PROJECT_ID = process.env.REACT_APP_IPFS_PROJECT_ID;
 const IPFS_PROJECT_SECRET = process.env.REACT_APP_IPFS_PROJECT_SECRET;
 
 const ipfsHeaders = {};
