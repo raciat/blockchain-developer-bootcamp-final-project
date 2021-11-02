@@ -144,4 +144,4 @@ Because the smart contract is using pricing feed, it was deployed to Rinkeby tes
 
 ![dApp screenshot](./docs/img/dapp-screenshot.jpg)
 
-A screencast of walking through the project is available [here](https://vimeo.com/raciat).
+A screencast of walking through the project is available [here](https://vimeo.com/641617752/6d4906a4f7).
